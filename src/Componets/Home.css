@@ -1,0 +1,20 @@
+.task-input, .task-search {
+    margin: 10px 0;}
+  
+  .task-input input,.task-input select,.task-search input {
+    margin-right: 10px;}
+  
+  ul {
+    list-style-type: none;
+    padding: 0;}
+  
+  li {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;}
+  
+  li span {
+    flex-grow: 1;}
+  
+  li button {
+    margin-left: 10px;}  
