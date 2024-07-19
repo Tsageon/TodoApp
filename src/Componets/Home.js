@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './Authentication'; // Import the useAuth hook
+import { useAuth } from './Authentication'; 
 import './Home.css';
 
 const Home = () => {
-  const { authenticated, error } = useAuth(); // Use the useAuth hook
+  const { authenticated, error } = useAuth(); 
 
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
@@ -60,7 +60,7 @@ const Home = () => {
           <TaskList tasks={filteredTasks} deleteTask={deleteTask} updateTask={updateTask} />
         </div>
       ) : error ? (
-        <p>Authentication Error: {error}</p>
+        <p>Something someting Error: {error}</p>
       ) : (
         <p>Please log in, we need the traffic.</p>
       )}

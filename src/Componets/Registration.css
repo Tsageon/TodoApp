@@ -1,6 +1,5 @@
-
 .Registration {
-  max-width: 350px;
+  max-width: 5000px;
   margin: auto;
   padding: 20px;
   border: 1px solid #333;
@@ -16,7 +15,7 @@
   color: #00bfff;
   text-align: center;
   position: relative;
-  padding-left: 10px;
+  padding-left: 10px
 }
 
 .Registration h1::before,
