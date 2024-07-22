@@ -1,5 +1,5 @@
 body{
-  background-color: whitesmoke;
+  background-color: grey;
 }
 
 .App {
@@ -10,8 +10,7 @@ nav {
   background-color: #282c34;
   padding: 10px;
   display: flex;
-  justify-content: center;
-}
+  justify-content: center;}
 
 nav ul {
   list-style: none;
@@ -26,7 +25,7 @@ nav li {
 }
 
 nav li a {
-  color: white;
+  color:whitesmoke;
   text-decoration: none;
   padding: 10px 20px;
   border-radius: 5px;
