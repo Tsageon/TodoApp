@@ -1,4 +1,6 @@
-const db = require('better-sqlite3')('databaseL.db');
+const db = require('better-sqlite3')(process.env.DB_PATH || 'databaseL.db');
+const bcrypt = require('bcrypt');
+const saltRounds = 12;
 
 const createTable = () => {
     const sql = `
@@ -8,7 +10,11 @@ const createTable = () => {
             password TEXT NOT NULL
         )
     `;
-    db.prepare(sql).run();
+    try {
+        db.prepare(sql).run();
+    } catch (error) {
+        console.error('Error creating users table:', error);
+    }
 };
 
 const insertTable = (username, password) => {
@@ -16,15 +22,24 @@ const insertTable = (username, password) => {
         INSERT INTO users (username, password)
         VALUES (?, ?)
     `;
-    db.prepare(sql).run(username, password);
+    try {
+        const hashedPassword = bcrypt.hashSync(password, saltRounds);
+        db.prepare(sql).run(username, hashedPassword);
+    } catch (error) {
+        console.error('Error inserting into users table:', error);
+    }
 };
 
 const getUsers = () => {
     const sql = `
         SELECT * FROM users
     `;
-    const rows = db.prepare(sql).all();
-    console.log(rows);
+    try {
+        const rows = db.prepare(sql).all();
+        console.log(rows);
+    } catch (error) {
+        console.error('Error retrieving users:', error);
+    }
 };
 
 const getUser = (id) => {
@@ -32,8 +47,12 @@ const getUser = (id) => {
         SELECT * FROM users
         WHERE id = ?
     `;
-    const row = db.prepare(sql).get(id);
-    console.log(row);
+    try {
+        const row = db.prepare(sql).get(id);
+        console.log(row);
+    } catch (error) {
+        console.error('Error retrieving user:', error);
+    }
 };
 
 createTable();

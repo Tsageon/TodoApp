@@ -7,21 +7,29 @@ const createTable = () => {
        firstname TEXT NOT NULL,
        lastname TEXT NOT NULL,
        email TEXT NOT NULL,
-       password TEXT NOT NULL,
-       confirm_password TEXT NOT NULL
+       password TEXT NOT NULL
     )
     `;
-    db.prepare(sql).run();
+    try {
+        db.prepare(sql).run();
+        console.log('Table created or already exists.');
+    } catch (error) {
+        console.error('Error creating table:', error);
+    }
 };
 
-const insertTable = (firstname, lastname, email, password, confirm_password) => {
+const insertTable = (firstname, lastname, email, password) => {
     const sql = `
-        INSERT INTO registar (firstname, lastname, email, password, confirm_password)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO registar (firstname, lastname, email, password)
+        VALUES (?, ?, ?, ?)
     `;
-    db.prepare(sql).run(firstname, lastname, email, password, confirm_password);
+    try {
+        db.prepare(sql).run(firstname, lastname, email, password);
+        console.log('Data inserted successfully.');
+    } catch (error) {
+        console.error('Error inserting data:', error);
+    }
 };
 
 createTable();
-
-insertTable("Kain", "Abel", "Stone@gmail.com", "2563", "2563");
+insertTable("Kain", "Abel", "Stone@gmail.com", "2563");

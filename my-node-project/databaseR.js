@@ -1,27 +1,35 @@
-const db = require('better-sqlite3')('databaseR.db');
+const db = require('better-sqlite3')(process.env.DB_PATH || 'database.db');
 
 const createTable = () => {
-  const sql = `
+    const sql = `
     CREATE TABLE IF NOT EXISTS register (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      firstname TEXT NOT NULL,
-      lastname TEXT NOT NULL,
-      email TEXT NOT NULL,
-      password TEXT NOT NULL
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       firstname TEXT NOT NULL,
+       lastname TEXT NOT NULL,
+       email TEXT NOT NULL UNIQUE,
+       password TEXT NOT NULL
     )
-  `;
-  db.prepare(sql).run();
+    `;
+    try {
+        db.prepare(sql).run();
+    } catch (error) {
+        console.error('Error creating register table:', error);
+    }
 };
 
-const insertUser = (firstname, lastname, email, password) => {
-  const sql = `
-    INSERT INTO register (firstname, lastname, email, password)
-    VALUES (?, ?, ?, ?)
-  `;
-  db.prepare(sql).run(firstname, lastname, email, password);
+const insertTable = (firstname, lastname, email, password) => {
+    const sql = `
+        INSERT INTO register (firstname, lastname, email, password)
+        VALUES (?, ?, ?, ?)
+    `;
+    try {
+        db.prepare(sql).run(firstname, lastname, email, password);
+    } catch (error) {
+        console.error('Error inserting into register table:', error);
+    }
 };
 
 module.exports = {
-  createTable,
-  insertUser
+    createTable,
+    insertTable
 };

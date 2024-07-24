@@ -21,3 +21,6 @@ SELECT * FROM registar
 WHERE id = 1
 
 DROP TABLE registar
+
+PRAGMA table_info(registar);
+SELECT * FROM registar;

@@ -4,7 +4,6 @@ import './Registration.css';
 
 function Registration() {
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -12,6 +11,7 @@ function Registration() {
     lastname: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setError('');
@@ -20,7 +20,6 @@ function Registration() {
   const validateInputs = () => {
     if (!formData.firstname) return 'First name is needed.';
     if (!formData.lastname) return 'Last name is needed.';
-    if (!formData.username) return 'Username is needed.';
     if (!formData.email || !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(formData.email)) return 'Invalid email format.';
     if (!formData.password) return 'Password is needed.';
     if (formData.password !== formData.confirmPassword) return 'Passwords aren\'t matching.';
@@ -34,37 +33,41 @@ function Registration() {
       setError(errorMsg);
       return;
     }
-  
+
+    setLoading(true);
+
     try {
-      const response = await fetch('http://localhost:3001/register', {  // Ensure this URL matches your server
+      const response = await fetch(`http://localhost:3000/register`, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-  
+
+      const data = await response.json();
+
       if (!response.ok) {
-        const { error } = await response.json();
-        setError(error);
-        return;
+        setError(data.errors ? data.errors.map(err => err.msg).join(', ') : data.error);
+      } else {
+        alert('Registration successful!');
+        setFormData({
+          email: '',
+          password: '',
+          confirmPassword: '',
+          firstname: '',
+          lastname: ''
+        });
+        setError('');
       }
-  
-      alert('Registration successful!');
-      setFormData({
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        firstname: '',
-        lastname: ''
-      });
-      setError('');
     } catch (err) {
-      setError('Wehlele');
+      console.error('Network error:', err);
+      setError('Network error, please try again later');
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   return (
     <div className="Registration">
       <form onSubmit={handleSubmit} className="form">
@@ -72,15 +75,10 @@ function Registration() {
         <p className="message">Signup now and get to use the list.</p>
         <div className="flex">
           <label>
-            <input
-              className="input"
-              type="text"
-              value={formData.firstname}
+            <input className="input" type="text" value={formData.firstname}
               onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
-              required
-              aria-label="First Name"
-            />
-            <span>Firstname</span>
+              required aria-label="First Name" aria-required="true"/>
+            <span><em>Firstname</em></span>
           </label>
           <label>
             <input
@@ -90,8 +88,8 @@ function Registration() {
               onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
               required
               aria-label="Last Name"
-            />
-            <span>Lastname</span>
+              aria-required="true"/>
+            <span><em>Lastname</em></span>
           </label>
         </div>
         <label>
@@ -102,8 +100,8 @@ function Registration() {
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
             aria-label="Email"
-          />
-          <span>Email</span>
+            aria-required="true"/>
+          <span><em>Email</em></span>
         </label>
         <label>
           <input
@@ -113,8 +111,8 @@ function Registration() {
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
             aria-label="Password"
-          />
-          <span>Password</span>
+            aria-required="true"/>
+          <span><em>Password</em></span>
         </label>
         <label>
           <input
@@ -124,12 +122,17 @@ function Registration() {
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             required
             aria-label="Confirm Password"
-          />
-          <span>Confirm password</span>
+            aria-required="true"/>
+          <span><em>Confirm Password</em></span>
         </label>
-        {error && <p className="error">{error}</p>}
-        <button type="submit" className="submit">Submit</button>
-        <p className="signin">Already have an account? <Link to="/login">Signin</Link></p>
+        {error && <p className="error"><em>{error}</em></p>}
+        {loading && <p className="loading"><em>Submitting...</em></p>}
+        <button type="submit" className="submit" disabled={loading}>
+          {loading ? <em>Submitting...</em> : <em>Submit</em>}
+        </button>
+        <p className="signin">
+          <em>Already have an account?</em> <Link to="/login"><em>Signin</em></Link>
+        </p>
       </form>
     </div>
   );
