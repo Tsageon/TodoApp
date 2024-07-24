@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; 
 import './Registration.css';
 
@@ -13,6 +13,10 @@ function Registration() {
   });
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    setError('');
+  }, [formData]);
+
   const validateInputs = () => {
     if (!formData.firstname) return 'First name is needed.';
     if (!formData.lastname) return 'Last name is needed.';
@@ -23,48 +27,65 @@ function Registration() {
     return '';
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errorMsg = validateInputs();
     if (errorMsg) {
       setError(errorMsg);
       return;
     }
-
-    alert('Yay Welcome!');
-    setFormData({
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      firstname: '',
-      lastname: ''
-    });
-    setError('');
+  
+    try {
+      const response = await fetch('http://localhost:3001/register', {  // Ensure this URL matches your server
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        const { error } = await response.json();
+        setError(error);
+        return;
+      }
+  
+      alert('Registration successful!');
+      setFormData({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        firstname: '',
+        lastname: ''
+      });
+      setError('');
+    } catch (err) {
+      setError('Wehlele');
+    }
   };
-
+  
   return (
     <div className="Registration">
       <form onSubmit={handleSubmit} className="form">
-        <p className="title"><h1>Register</h1></p>
+        <h1 className="title">Register</h1>
         <p className="message">Signup now and get to use the list.</p>
         <div className="flex">
           <label>
             <input
               className="input"
               type="text"
-              placeholder=""
               value={formData.firstname}
               onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
               required
-              aria-label="First Name"/>
+              aria-label="First Name"
+            />
             <span>Firstname</span>
           </label>
           <label>
             <input
               className="input"
               type="text"
-              placeholder=""
               value={formData.lastname}
               onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
               required
@@ -76,22 +97,9 @@ function Registration() {
         <label>
           <input
             className="input"
-            type="text"
-            placeholder=""
-            value={formData.username}
-            onChange={(e) => setFormData({...formData, username: e.target.value })}
-            required
-            aria-label="Username"
-          />
-          <span>Username</span>
-        </label>
-        <label>
-          <input
-            className="input"
             type="email"
-            placeholder=""
             value={formData.email}
-            onChange={(e) => setFormData({...formData, email: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
             aria-label="Email"
           />
@@ -101,7 +109,6 @@ function Registration() {
           <input
             className="input"
             type="password"
-            placeholder=""
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
@@ -113,7 +120,6 @@ function Registration() {
           <input
             className="input"
             type="password"
-            placeholder=""
             value={formData.confirmPassword}
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             required

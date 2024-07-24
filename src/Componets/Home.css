@@ -52,14 +52,22 @@ li {
   justify-content: space-between;
   align-items: center;}
 
+.delete{
+ margin-bottom: 20px;
+ margin-right: 10px;}
+
+.edit{
+  margin-bottom: 20px;
+  margin-right: 10px;} 
+ 
 li span {
   flex: 1;}
 
 li button {
-  background-color: #dc3545;}
+  background-color: lightblue;}
 
 li button:hover {
-  background-color: #c82333;}
+  background-color: black;}
 
 [data-priority="High"] span {
   color: red;}
