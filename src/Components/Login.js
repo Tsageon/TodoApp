@@ -17,25 +17,31 @@ function Login() {
     return '';
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errorMsg = validateInputs();
-    if (errorMsg) {
-      setError(errorMsg);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const validationError = validateInputs();
+    if (validationError) {
+      setError(validationError);
       return;
     }
-
+  
     try {
-      const response = await axios.post('http://localhost:3000/login', formData);
-      alert('Wohoo Welcome Back!');
-      setFormData({
-        email: '',
-        password: ''
+      const response = await axios.post('http://localhost:3001/login', {
+        email: formData.email,
+        password: formData.password
+      }, {
+        withCredentials: true
       });
-      setError('');
-      navigate('/home');
-    } catch (err) {
-      setError('Network error, Time to relax.');
+      console.log('Login response:', response.data);
+  
+      if (response.data.authenticated) {
+        navigate('/dashboard');
+      } else {
+        setError('Invalid email or password.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An error occurred while logging in. Please try again.');
     }
   };
 
@@ -49,12 +55,13 @@ function Login() {
           </svg>
           <input
             autoComplete="off"
-            placeholder="Username"
+            placeholder="Email"
             className="input-field"
             type="text"
             name="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}/>
+            onChange={(e) => setFormData({...formData, email: e.target.value })}
+          />
         </div>
         <div className="field">
           <svg className="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -66,7 +73,8 @@ function Login() {
             type="password"
             name="password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}/>
+            onChange={(e) => setFormData({...formData, password: e.target.value })}
+          />
         </div>
         {error && <p className="error">{error}</p>}
         <div className="btn">

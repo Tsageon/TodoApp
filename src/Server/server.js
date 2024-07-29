@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
 const db = require('better-sqlite3')('database.db');
 const app = express();
 const port = 3001;
@@ -8,20 +9,26 @@ const port = 3001;
 app.use(cors({
   origin: 'http://localhost:3000',
   methods: 'GET,POST,PUT,DELETE',
-  allowedHeaders: 'Content-Type,Authorization'
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: true
+}));
+
+app.use(session({
+  secret: 'yourSecretKey',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
 }));
 
 app.use(express.json());
 
 const createTables = () => {
-  // Drop tables if they exist
   const dropUserTable = 'DROP TABLE IF EXISTS user';
   const dropTaskTable = 'DROP TABLE IF EXISTS task';
   
   db.prepare(dropUserTable).run();
   db.prepare(dropTaskTable).run();
-  
-  // Create tables
+
   const userTable = `
     CREATE TABLE IF NOT EXISTS user (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,43 +61,117 @@ app.get('/', (req, res) => {
 
 app.post('/register', async (req, res) => {
   console.log('Received registration request:', req.body);
-  const { firstname, lastname, email, password, confirmPassword } = req.body;
+  const { firstname, lastname, email, password } = req.body;
 
-  if (!firstname || !lastname || !email || !password || !confirmPassword) {
-    console.log('Missing fields');
-    return res.status(400).json({ error: 'All fields are required.' });
-  }
-
-  if (password !== confirmPassword) {
-    console.log('Passwords don\'t match');
-    return res.status(400).json({ error: 'Passwords don\'t match.' });
-  }
-
-  if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
-    console.log('Invalid email format');
-    return res.status(400).json({ error: 'Invalid email format.' });
-  }
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const existingUser = db.prepare('SELECT * FROM user WHERE email = ?').get(email);
-    if (existingUser) {
-      console.log('Email already in use');
-      return res.status(400).json({ error: 'Email already in use.' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log('Password hashed:', hashedPassword);
-    const info = db.prepare('INSERT INTO user (firstname, lastname, email, password) VALUES (?, ?, ?, ?)').run(firstname, lastname, email, hashedPassword);
-    console.log('User registered with ID:', info.lastInsertRowid);
-    res.status(201).json({ id: info.lastInsertRowid });
+    const result = db.prepare('INSERT INTO user (firstname, lastname, email, password) VALUES (?, ?, ?, ?)').run(
+      firstname, lastname, email, hashedPassword
+    );
+    console.log('User registered:', result); 
+    res.status(201).send({ id: result.lastInsertRowid });
   } catch (error) {
-    console.error('Error registering user:', error.message);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error registering user:', error);
+    res.status(500).send('Error registering user');
+  }
+});
+app.post('/login', async (req, res) => {
+  console.log('Received login request:', req.body);
+  const { email, password } = req.body;
+
+  try {
+    console.log('Searching for user with email:', email); 
+    const user = db.prepare('SELECT * FROM user WHERE email = ?').get(email);
+    console.log('User fetched from database:', user); 
+
+    if (user) {
+      console.log('Fetched user details:', user); 
+      console.log('Comparing passwords:', { plaintext: password, hashed: user.password }); 
+      const isMatch = await bcrypt.compare(password, user.password);
+      console.log('Password match result:', isMatch);
+
+      if (isMatch) {
+        req.session.userId = user.id;
+        console.log('User successfully logged in:', user.id); 
+        res.send({ authenticated: true, userId: user.id });
+      } else {
+        console.log('Invalid password for user:', email); 
+        res.status(401).send({ authenticated: false });
+      }
+    } else {
+      console.log('No user found with email:', email); 
+      res.status(401).send({ authenticated: false });
+    }
+  } catch (error) {
+    console.error('Error occurred during login:', error); // Log any errors
+    res.status(500).send('Error logging in');
   }
 });
 
-// Other endpoints remain the same
+app.get('/check-auth', (req, res) => {
+  console.log('Checking authentication for session:', req.session); // Log session details
+  if (req.session.userId) {
+    res.send({ authenticated: true, userId: req.session.userId });
+  } else {
+    res.send({ authenticated: false });
+  }
+});
+
+app.get('/tasks/:userId', (req, res) => {
+  const { userId } = req.params;
+  console.log('Fetching tasks for userId:', userId); // Log the userId
+  try {
+    const tasks = db.prepare('SELECT * FROM task WHERE userId = ?').all(userId);
+    console.log('Fetched tasks:', tasks); // Log the fetched tasks
+    res.send(tasks);
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+    res.status(500).send('Error fetching tasks');
+  }
+});
+
+app.post('/tasks', (req, res) => {
+  const { description, priority, userId } = req.body;
+  console.log('Adding task:', { description, priority, userId }); // Log the task details
+  try {
+    const result = db.prepare('INSERT INTO task (description, priority, userId) VALUES (?, ?, ?)').run(
+      description, priority, userId
+    );
+    res.send({ id: result.lastInsertRowid, description, priority });
+  } catch (error) {
+    console.error('Error adding task:', error);
+    res.status(500).send('Error adding task');
+  }
+});
+
+app.delete('/tasks/:id', (req, res) => {
+  const { id } = req.params;
+  console.log('Deleting task:', id); // Log the task id
+  try {
+    db.prepare('DELETE FROM task WHERE id = ?').run(id);
+    res.sendStatus(204);
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    res.status(500).send('Error deleting task');
+  }
+});
+
+app.put('/tasks/:id', (req, res) => {
+  const { id } = req.params;
+  const { description, priority } = req.body;
+  console.log('Updating task:', { id, description, priority }); // Log the update details
+  try {
+    db.prepare('UPDATE task SET description = ?, priority = ? WHERE id = ?').run(
+      description, priority, id
+    );
+    res.sendStatus(204);
+  } catch (error) {
+    console.error('Error updating task:', error);
+    res.status(500).send('Error updating task');
+  }
+});
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });

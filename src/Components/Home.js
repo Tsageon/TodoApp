@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Home.css';
 
 const Home = () => {
@@ -7,18 +9,39 @@ const Home = () => {
   const [priority, setPriority] = useState('Low');
   const [search, setSearch] = useState('');
   const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loggedInUserId = 1; 
-    setUserId(loggedInUserId);
-    fetchTasks(loggedInUserId);
-  }, []);
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/check-auth', {
+          withCredentials: true
+        });
+        console.log('Authentication check response:', response.data); // Log the response
+        const data = response.data;
+        if (data.authenticated) {
+          setUserId(data.userId);
+          fetchTasks(data.userId);
+        } else {
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        navigate('/login'); 
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   const fetchTasks = async (userId) => {
     try {
-      const response = await fetch(`/tasks/${userId}`);
-      const data = await response.json();
-      setTasks(data);
+      console.log('Fetching tasks for userId:', userId); // Log the userId
+      const response = await axios.get(`http://localhost:3001/tasks/${userId}`, {
+        withCredentials: true
+      });
+      console.log('Fetched tasks:', response.data); // Log the fetched tasks
+      setTasks(response.data);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
@@ -27,12 +50,15 @@ const Home = () => {
   const addTask = async () => {
     if (newTask.trim() === '' || userId === null) return;
     try {
-      const response = await fetch('/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: newTask, priority, userId }),
+      const response = await axios.post('http://localhost:3001/tasks', {
+        description: newTask,
+        priority,
+        userId
+      }, {
+        withCredentials: true
       });
-      const data = await response.json();
+      const data = response.data;
+      console.log('Task added:', data); // Log the added task
       setTasks([...tasks, { id: data.id, description: newTask, priority }]);
       setNewTask('');
       setPriority('Low');
@@ -43,7 +69,10 @@ const Home = () => {
 
   const deleteTask = async (id) => {
     try {
-      await fetch(`/tasks/${id}`, { method: 'DELETE' });
+      await axios.delete(`http://localhost:3001/tasks/${id}`, {
+        withCredentials: true
+      });
+      console.log('Task deleted:', id); // Log the deleted task id
       setTasks(tasks.filter((task) => task.id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -53,11 +82,13 @@ const Home = () => {
   const updateTask = async (id, newDescription, newPriority) => {
     if (!newDescription || !newPriority) return;
     try {
-      await fetch(`/tasks/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: newDescription, priority: newPriority }),
+      await axios.put(`http://localhost:3001/tasks/${id}`, {
+        description: newDescription,
+        priority: newPriority
+      }, {
+        withCredentials: true
       });
+      console.log('Task updated:', { id, newDescription, newPriority }); // Log the updated task
       setTasks(
         tasks.map((task) =>
           task.id === id ? { ...task, description: newDescription, priority: newPriority } : task
@@ -80,12 +111,12 @@ const Home = () => {
         setNewTask={setNewTask}
         priority={priority}
         setPriority={setPriority}
-        addTask={addTask}/>
+        addTask={addTask} />
       <TaskSearch search={search} setSearch={setSearch} />
       <TaskList
         tasks={filteredTasks}
         deleteTask={deleteTask}
-        updateTask={updateTask}/>
+        updateTask={updateTask} />
     </div>
   );
 };
@@ -96,7 +127,7 @@ const TaskInput = ({ newTask, setNewTask, priority, setPriority, addTask }) => (
       type="text"
       value={newTask}
       onChange={(e) => setNewTask(e.target.value)}
-      placeholder="What are we doing?"/>
+      placeholder="What are we doing?" />
     <select value={priority} onChange={(e) => setPriority(e.target.value)}>
       <option value="High">High</option>
       <option value="Medium">Medium</option>
@@ -112,7 +143,7 @@ const TaskSearch = ({ search, setSearch }) => (
       type="text"
       value={search}
       onChange={(e) => setSearch(e.target.value)}
-      placeholder="Do you remember what you did?"/>
+      placeholder="Do you remember what you did?" />
   </div>
 );
 
@@ -173,7 +204,7 @@ const EditTaskForm = ({ task, onUpdate }) => {
         type="text"
         value={newDescription}
         onChange={(e) => setNewDescription(e.target.value)}
-        placeholder="What's new?"/>
+        placeholder="What's new?" />
       <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}>
         <option value="High">High</option>
         <option value="Medium">Medium</option>

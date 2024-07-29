@@ -24,3 +24,5 @@ INSERT INTO task (description, priority, userId) VALUES
   ('Review SQL schema', 'Medium', 2);
 
 ALTER TABLE task ADD COLUMN dueDate TEXT;
+
+SELECT * FROM user WHERE email = 'test@example.com';
