@@ -1,12 +1,10 @@
-/* Container for the buttons */
 .btn {
   display: flex;
   justify-content: center;
-  gap: 10px; /* Space between buttons */
-  margin-top: 20px; /* Adjust spacing as needed */
+  gap: 10px; 
+  margin-top: 20px;
 }
 
-/* Existing styles */
 .login {
   max-width: 1000px;
   margin: auto;
@@ -70,6 +68,8 @@
 .button1 {
   position: relative;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 3em;
   padding: 10px;
   border-radius: 10px;
@@ -78,14 +78,26 @@
   overflow: hidden;
   background: none;
   transition: transform 0.2s ease-in-out;
+  color: white;
+  font-size: 1em;
 }
 
-.button1 .bg-animation {
-  position: absolute;
-  inset: 1;
-  background: conic-gradient(from 90deg at 50% 50%, #e7029a 0%, #f472b6 50%, #bd5fff 100%);
-  animation: spin 2s linear infinite;
-}
+.button1 span {
+  position: relative; 
+  z-index: 1;}
+
+  .button1 .bg-animation {
+    position: absolute;
+    border-radius: 150%;
+    inset: 0;
+    background: conic-gradient(from 90deg at 50% 50%, #e7029a 0%, #f472b6 50%, #bd5fff 100%);
+    animation: spin 4s linear infinite;
+    z-index: 0;
+    width: -100%;
+    height: -100%; 
+    top: -10%;
+    left: -10%; 
+  }  
 
 .button1:hover {
   transform: scale(1.05);

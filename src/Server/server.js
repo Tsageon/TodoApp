@@ -23,12 +23,6 @@ app.use(session({
 app.use(express.json());
 
 const createTables = () => {
-  const dropUserTable = 'DROP TABLE IF EXISTS user';
-  const dropTaskTable = 'DROP TABLE IF EXISTS task';
-  
-  db.prepare(dropUserTable).run();
-  db.prepare(dropTaskTable).run();
-
   const userTable = `
     CREATE TABLE IF NOT EXISTS user (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -76,6 +70,7 @@ app.post('/register', async (req, res) => {
     res.status(500).send('Error registering user');
   }
 });
+
 app.post('/login', async (req, res) => {
   console.log('Received login request:', req.body);
   const { email, password } = req.body;
@@ -104,13 +99,13 @@ app.post('/login', async (req, res) => {
       res.status(401).send({ authenticated: false });
     }
   } catch (error) {
-    console.error('Error occurred during login:', error); // Log any errors
+    console.error('Error occurred during login:', error);
     res.status(500).send('Error logging in');
   }
 });
 
 app.get('/check-auth', (req, res) => {
-  console.log('Checking authentication for session:', req.session); // Log session details
+  console.log('Checking authentication for session:', req.session); 
   if (req.session.userId) {
     res.send({ authenticated: true, userId: req.session.userId });
   } else {
@@ -120,10 +115,10 @@ app.get('/check-auth', (req, res) => {
 
 app.get('/tasks/:userId', (req, res) => {
   const { userId } = req.params;
-  console.log('Fetching tasks for userId:', userId); // Log the userId
+  console.log('Fetching tasks for userId:', userId);
   try {
     const tasks = db.prepare('SELECT * FROM task WHERE userId = ?').all(userId);
-    console.log('Fetched tasks:', tasks); // Log the fetched tasks
+    console.log('Fetched tasks:', tasks); 
     res.send(tasks);
   } catch (error) {
     console.error('Error fetching tasks:', error);
@@ -133,7 +128,7 @@ app.get('/tasks/:userId', (req, res) => {
 
 app.post('/tasks', (req, res) => {
   const { description, priority, userId } = req.body;
-  console.log('Adding task:', { description, priority, userId }); // Log the task details
+  console.log('Adding task:', { description, priority, userId }); 
   try {
     const result = db.prepare('INSERT INTO task (description, priority, userId) VALUES (?, ?, ?)').run(
       description, priority, userId
@@ -147,7 +142,7 @@ app.post('/tasks', (req, res) => {
 
 app.delete('/tasks/:id', (req, res) => {
   const { id } = req.params;
-  console.log('Deleting task:', id); // Log the task id
+  console.log('Deleting task:', id); 
   try {
     db.prepare('DELETE FROM task WHERE id = ?').run(id);
     res.sendStatus(204);
@@ -160,7 +155,7 @@ app.delete('/tasks/:id', (req, res) => {
 app.put('/tasks/:id', (req, res) => {
   const { id } = req.params;
   const { description, priority } = req.body;
-  console.log('Updating task:', { id, description, priority }); // Log the update details
+  console.log('Updating task:', { id, description, priority }); 
   try {
     db.prepare('UPDATE task SET description = ?, priority = ? WHERE id = ?').run(
       description, priority, id

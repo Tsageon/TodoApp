@@ -78,9 +78,12 @@ function Login() {
         </div>
         {error && <p className="error">{error}</p>}
         <div className="btn">
-          <button className="button1" type="submit">Login</button>
-          <button className="button2">Sign Up</button>
-        </div>
+        <button className="button1" type="submit">
+        <span>Login</span>
+        <div className="bg-animation"></div>
+        </button>
+        <button className="button2">Sign Up</button>
+</div>
         <p className="signin">Don't have an account?<Link to="/register">Register</Link></p>
       </form>
     </div>
