@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Registar.css'
+import './Registar.css'; 
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -44,7 +44,7 @@ function Register() {
     };
 
     try {
-      const response = await axios.post('http://localhost:3000/register', data);
+      const response = await axios.post('http://localhost:3001/register', data);
       console.log('Registration successful:', response.data);
       navigate('/login');
     } catch (error) {
@@ -61,9 +61,15 @@ function Register() {
         <p className="message">Signup now and get to use the list.</p>
         <div className="flex">
           <label>
-            <input className="input" type="text" value={formData.firstname}
+            <input
+              className="input"
+              type="text"
+              value={formData.firstname}
               onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
-              required aria-label="First Name" aria-required="true" />
+              required
+              aria-label="First Name"
+              aria-required="true"
+            />
             <span><em>Firstname</em></span>
           </label>
           <label>
@@ -74,7 +80,8 @@ function Register() {
               onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
               required
               aria-label="Last Name"
-              aria-required="true" />
+              aria-required="true"
+            />
             <span><em>Lastname</em></span>
           </label>
         </div>
@@ -86,7 +93,8 @@ function Register() {
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
             aria-label="Email"
-            aria-required="true" />
+            aria-required="true"
+          />
           <span><em>Email</em></span>
         </label>
         <label>
@@ -97,7 +105,8 @@ function Register() {
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
             aria-label="Password"
-            aria-required="true" />
+            aria-required="true"
+          />
           <span><em>Password</em></span>
         </label>
         <label>
@@ -108,7 +117,8 @@ function Register() {
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             required
             aria-label="Confirm Password"
-            aria-required="true" />
+            aria-required="true"
+          />
           <span><em>Confirm Password</em></span>
         </label>
         {error && <p className="error"><em>{error}</em></p>}

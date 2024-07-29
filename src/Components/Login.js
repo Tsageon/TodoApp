@@ -54,8 +54,7 @@ function Login() {
             type="text"
             name="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          />
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}/>
         </div>
         <div className="field">
           <svg className="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -67,15 +66,14 @@ function Login() {
             type="password"
             name="password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          />
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}/>
         </div>
         {error && <p className="error">{error}</p>}
         <div className="btn">
           <button className="button1" type="submit">Login</button>
           <button className="button2">Sign Up</button>
         </div>
-        <p className="signin">New to us?<Link to="/register">Register</Link></p>
+        <p className="signin">Don't have an account?<Link to="/register">Register</Link></p>
       </form>
     </div>
   );
