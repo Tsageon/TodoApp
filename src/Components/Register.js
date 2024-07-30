@@ -13,6 +13,7 @@ function Register() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   const validateInputs = () => {
@@ -46,9 +47,16 @@ function Register() {
     try {
       const response = await axios.post('http://localhost:3001/register', data);
       console.log('Registration successful:', response.data);
-      navigate('/login');
+      setSuccessMessage('Registration successful! Redirecting to the login page...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000); 
     } catch (error) {
-      setError('Registration failed: ' + (error.response?.data?.error || 'Unknown error'));
+      if (error.response?.status === 409) {
+        setError('Email already exists');
+      } else {
+        setError('Registration failed: ' + (error.response?.data?.error || 'Unknown error'));
+      }
     } finally {
       setLoading(false);
     }
@@ -68,8 +76,7 @@ function Register() {
               onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
               required
               aria-label="First Name"
-              aria-required="true"
-            />
+              aria-required="true"/>
             <span><em>Firstname</em></span>
           </label>
           <label>
@@ -80,8 +87,7 @@ function Register() {
               onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
               required
               aria-label="Last Name"
-              aria-required="true"
-            />
+              aria-required="true"/>
             <span><em>Lastname</em></span>
           </label>
         </div>
@@ -93,8 +99,7 @@ function Register() {
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
             aria-label="Email"
-            aria-required="true"
-          />
+            aria-required="true"/>
           <span><em>Email</em></span>
         </label>
         <label>
@@ -122,6 +127,7 @@ function Register() {
           <span><em>Confirm Password</em></span>
         </label>
         {error && <p className="error"><em>{error}</em></p>}
+        {successMessage && <p className="success"><em>{successMessage}</em></p>}
         {loading && <p className="loading"><em>Submitting...</em></p>}
         <button type="submit" className="submit" disabled={loading}>
           {loading ? <em>Submitting...</em> : <em>Submit</em>}

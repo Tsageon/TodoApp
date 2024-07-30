@@ -60,6 +60,10 @@ app.post('/register', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
+    const existingUser = db.prepare('SELECT * FROM user WHERE email = ?').get(email);
+    if (existingUser) {
+      return res.status(409).send('Email already exists'); 
+    }
     const result = db.prepare('INSERT INTO user (firstname, lastname, email, password) VALUES (?, ?, ?, ?)').run(
       firstname, lastname, email, hashedPassword
     );
@@ -123,24 +127,22 @@ app.get('/tasks/:userId', (req, res) => {
   } catch (error) {
     console.error('Error fetching tasks:', error);
     res.status(500).send('Error fetching tasks');
-  }
-});
+  }});
 
 app.post('/tasks', (req, res) => {
   const { description, priority, userId } = req.body;
   console.log('Adding task:', { description, priority, userId }); 
   try {
-    const result = db.prepare('INSERT INTO task (description, priority, userId) VALUES (?, ?, ?)').run(
-      description, priority, userId
+    const result = db.prepare('INSERT INTO task (description, priority, userId)VALUES (?, ?, ?)').run(
+      description,priority,userId
     );
-    res.send({ id: result.lastInsertRowid, description, priority });
+    res.send({id: result.lastInsertRowid,description,priority});
   } catch (error) {
     console.error('Error adding task:', error);
     res.status(500).send('Error adding task');
-  }
-});
+  }});
 
-app.delete('/tasks/:id', (req, res) => {
+app.delete('/tasks/:id',(req, res) => {
   const { id } = req.params;
   console.log('Deleting task:', id); 
   try {
@@ -152,20 +154,18 @@ app.delete('/tasks/:id', (req, res) => {
   }
 });
 
-app.put('/tasks/:id', (req, res) => {
-  const { id } = req.params;
-  const { description, priority } = req.body;
-  console.log('Updating task:', { id, description, priority }); 
+app.put('/tasks/:id', (req,res) => {
+  const {id} = req.params;
+  const {description,priority} = req.body;
+  console.log('Updating task:',{id,description,priority}); 
   try {
     db.prepare('UPDATE task SET description = ?, priority = ? WHERE id = ?').run(
-      description, priority, id
-    );
+      description, priority, id);
     res.sendStatus(204);
   } catch (error) {
     console.error('Error updating task:', error);
     res.status(500).send('Error updating task');
-  }
-});
+  }});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

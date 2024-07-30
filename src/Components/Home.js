@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState,useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import './Home.css';
 
 const Home = () => {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
-  const [priority, setPriority] = useState('Low');
-  const [search, setSearch] = useState('');
-  const [userId, setUserId] = useState(null);
+  const [tasks,setTasks] = useState([]);
+  const [newTask,setNewTask] = useState('');
+  const [priority,setPriority] = useState('Low');
+  const [search,setSearch] = useState('');
+  const [userId,setUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const Home = () => {
       const response = await axios.get(`http://localhost:3001/tasks/${userId}`, {
         withCredentials: true
       });
-      console.log('Fetched tasks:', response.data);
+      console.log('Fetched tasks:',response.data);
       setTasks(response.data);
     } catch (error) {
       console.error('Error fetching tasks:',error);
@@ -51,21 +51,19 @@ const Home = () => {
     if (newTask.trim() === '' || userId === null) return;
     try {
       const response = await axios.post('http://localhost:3001/tasks', {
-        description: newTask,
-        priority,
+        description: newTask,priority,
         userId
       }, {
         withCredentials: true
       });
       const data = response.data;
       console.log('Task added:', data); 
-      setTasks([...tasks, { id: data.id, description: newTask, priority }]);
+      setTasks([...tasks, {id: data.id, description: newTask,priority }]);
       setNewTask('');
       setPriority('Low');
     } catch (error) {
       console.error('Error adding task:', error);
-    }
-  };
+    }};
 
   const deleteTask = async (id) => {
     try {
@@ -76,8 +74,7 @@ const Home = () => {
       setTasks(tasks.filter((task) => task.id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);
-    }
-  };
+    }};
 
   const updateTask = async (id, newDescription, newPriority) => {
     if (!newDescription || !newPriority) return;
@@ -91,13 +88,11 @@ const Home = () => {
       console.log('Task updated:', {id, newDescription,newPriority }); 
       setTasks(
         tasks.map((task) =>
-          task.id === id ? {...task, description: newDescription, priority: newPriority } : task
-        )
+          task.id === id ? {...task, description: newDescription, priority: newPriority } : task)
       );
     } catch (error) {
-      console.error('Error updating task:', error);
-    }
-  };
+      console.error('Error updating task:',error);
+    }};
 
   const handleSearch = () => {
     const filteredTasks = tasks.filter((task) =>
@@ -123,7 +118,7 @@ const Home = () => {
   );
 };
 
-const TaskInput = ({ newTask, setNewTask, priority, setPriority, addTask }) => (
+const TaskInput = ({newTask,setNewTask,priority,setPriority,addTask}) => (
   <div className="task-input">
     <input
       type="text"
@@ -151,12 +146,10 @@ const TaskList = ({ tasks, deleteTask, updateTask }) => {
   const [editingTaskId, setEditingTaskId] = useState(null);
 
   const handleEditClick = (id) => {
-    setEditingTaskId(id);
-  };
+    setEditingTaskId(id);};
 
   const handleCancelEdit = () => {
-    setEditingTaskId(null);
-  };
+    setEditingTaskId(null);};
 
   return (
     <div>
@@ -172,9 +165,7 @@ const TaskList = ({ tasks, deleteTask, updateTask }) => {
                     task={task}
                     onUpdate={(id, newDescription, newPriority) => {
                       updateTask(id, newDescription, newPriority);
-                      handleCancelEdit();
-                    }}
-                  />
+                      handleCancelEdit();}}/>
                   <button className='cancel' onClick={handleCancelEdit}>Cancel</button>
                 </>
               ) : (
@@ -187,24 +178,20 @@ const TaskList = ({ tasks, deleteTask, updateTask }) => {
         <p>No tasks yet.</p>
       )}
     </div>
-  );
-};
+  );};
 
-const EditTaskForm = ({ task, onUpdate }) => {
-  const [newDescription, setNewDescription] = useState(task.description);
-  const [newPriority, setNewPriority] = useState(task.priority);
+const EditTaskForm = ({task,onUpdate }) => {
+  const [newDescription,setNewDescription] = useState(task.description);
+  const [newPriority,setNewPriority] = useState(task.priority);
 
   const handleUpdate = () => {
-    onUpdate(task.id, newDescription, newPriority);
-  };
+    onUpdate(task.id, newDescription, newPriority);};
 
   return (
     <div className="edit-task-form">
-      <input
-        type="text"
-        value={newDescription}
-        onChange={(e) => setNewDescription(e.target.value)}
-        placeholder="What's new?" />
+      <input type="text"
+        value={newDescription}  onChange={(e) => setNewDescription(e.target.value)}
+        placeholder="New Description?"/>
       <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}>
         <option value="High">High</option>
         <option value="Medium">Medium</option>
@@ -212,8 +199,7 @@ const EditTaskForm = ({ task, onUpdate }) => {
       </select>
       <button onClick={handleUpdate}>Update</button>
     </div>
-  );
-};
+  );};
 
 const getPriorityColor = (priority) => {
   switch (priority) {
@@ -225,7 +211,6 @@ const getPriorityColor = (priority) => {
       return 'green';
     default:
       return 'black';
-  }
-};
+  }};
 
 export default Home;
