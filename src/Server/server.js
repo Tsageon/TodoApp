@@ -50,7 +50,7 @@ const createTables = () => {
 createTables();
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the Task Management API');
+  res.send('Welcome to the Task Management API. No Money Baby.');
 });
 
 app.post('/register', async (req, res) => {
@@ -66,7 +66,7 @@ app.post('/register', async (req, res) => {
     console.log('User registered:', result); 
     res.status(201).send({ id: result.lastInsertRowid });
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error('Wehlele:', error);
     res.status(500).send('Error registering user');
   }
 });

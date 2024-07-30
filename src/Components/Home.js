@@ -17,7 +17,7 @@ const Home = () => {
         const response = await axios.get('http://localhost:3001/check-auth', {
           withCredentials: true
         });
-        console.log('Authentication check response:', response.data); // Log the response
+        console.log('Authentication check response:',response.data); 
         const data = response.data;
         if (data.authenticated) {
           setUserId(data.userId);
@@ -26,7 +26,7 @@ const Home = () => {
           navigate('/login');
         }
       } catch (error) {
-        console.error('Error checking authentication:', error);
+        console.error('Error checking authentication:',error);
         navigate('/login'); 
       }
     };
@@ -36,14 +36,14 @@ const Home = () => {
 
   const fetchTasks = async (userId) => {
     try {
-      console.log('Fetching tasks for userId:', userId); // Log the userId
+      console.log('Fetching tasks for userId:', userId); 
       const response = await axios.get(`http://localhost:3001/tasks/${userId}`, {
         withCredentials: true
       });
-      console.log('Fetched tasks:', response.data); // Log the fetched tasks
+      console.log('Fetched tasks:', response.data);
       setTasks(response.data);
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+      console.error('Error fetching tasks:',error);
     }
   };
 
@@ -58,7 +58,7 @@ const Home = () => {
         withCredentials: true
       });
       const data = response.data;
-      console.log('Task added:', data); // Log the added task
+      console.log('Task added:', data); 
       setTasks([...tasks, { id: data.id, description: newTask, priority }]);
       setNewTask('');
       setPriority('Low');
@@ -72,7 +72,7 @@ const Home = () => {
       await axios.delete(`http://localhost:3001/tasks/${id}`, {
         withCredentials: true
       });
-      console.log('Task deleted:', id); // Log the deleted task id
+      console.log('Task deleted:', id);
       setTasks(tasks.filter((task) => task.id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -88,10 +88,10 @@ const Home = () => {
       }, {
         withCredentials: true
       });
-      console.log('Task updated:', { id, newDescription, newPriority }); // Log the updated task
+      console.log('Task updated:', {id, newDescription,newPriority }); 
       setTasks(
         tasks.map((task) =>
-          task.id === id ? { ...task, description: newDescription, priority: newPriority } : task
+          task.id === id ? {...task, description: newDescription, priority: newPriority } : task
         )
       );
     } catch (error) {
@@ -99,9 +99,12 @@ const Home = () => {
     }
   };
 
-  const filteredTasks = tasks.filter((task) =>
-    task.description.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleSearch = () => {
+    const filteredTasks = tasks.filter((task) =>
+      task.description.toLowerCase().includes(search.toLowerCase())
+    );
+    setTasks(filteredTasks);
+  };
 
   return (
     <div>
@@ -111,12 +114,11 @@ const Home = () => {
         setNewTask={setNewTask}
         priority={priority}
         setPriority={setPriority}
-        addTask={addTask} />
-      <TaskSearch search={search} setSearch={setSearch} />
-      <TaskList
-        tasks={filteredTasks}
+        addTask={addTask}/>
+      <TaskSearch search={search} setSearch={setSearch} handleSearch={handleSearch}/>
+      <TaskList tasks={tasks}
         deleteTask={deleteTask}
-        updateTask={updateTask} />
+        updateTask={updateTask}/>
     </div>
   );
 };
@@ -127,7 +129,7 @@ const TaskInput = ({ newTask, setNewTask, priority, setPriority, addTask }) => (
       type="text"
       value={newTask}
       onChange={(e) => setNewTask(e.target.value)}
-      placeholder="What are we doing?" />
+      placeholder="What are we doing?"/>
     <select value={priority} onChange={(e) => setPriority(e.target.value)}>
       <option value="High">High</option>
       <option value="Medium">Medium</option>
@@ -137,13 +139,11 @@ const TaskInput = ({ newTask, setNewTask, priority, setPriority, addTask }) => (
   </div>
 );
 
-const TaskSearch = ({ search, setSearch }) => (
+const TaskSearch = ({ search, setSearch, handleSearch }) => (
   <div className="task-search">
-    <input
-      type="text"
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      placeholder="Do you remember what you did?" />
+    <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+      placeholder="Search for task"/>
+    <button onClick={handleSearch}>Search</button>
   </div>
 );
 
