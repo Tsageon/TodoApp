@@ -4,19 +4,18 @@ import axios from 'axios';
 import './Login.css';
 
 function Login() {
-  const [formData, setFormData] = useState({
+  const [formData,setFormData] = useState({
     email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+    password: ''});
+
+  const [error,setError] = useState('');
+  const [successMessage,setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   const validateInputs = () => {
     if (!formData.email || !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(formData.email)) return 'Invalid email address.';
     if (!formData.password) return 'Password is needed.';
-    return '';
-  };
+    return '';};
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -36,10 +35,10 @@ function Login() {
       console.log('Login response:', response.data);
   
       if (response.data.authenticated) {
-        setSuccessMessage('Login successful! Redirecting to the home page...');
+        setSuccessMessage('Login successful! Redirecting to the home page.Please WAIT! Click On Home Tab to acess Tasklist...');
         setTimeout(() => {
           navigate('/dashboard');
-        }, 2000); 
+        }, 6000); 
       } else {
         setError('Invalid email or password.');
       }

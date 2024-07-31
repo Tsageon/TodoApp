@@ -4,16 +4,13 @@ import axios from 'axios';
 import './Registar.css'; 
 
 function Register() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    firstname: '',
+  const [formData,setFormData] = useState({
+    email: '',password: '',confirmPassword: '',firstname: '',
     lastname: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [error,setError] = useState('');
+  const [loading,setLoading] = useState(false);
+  const [successMessage,setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   const validateInputs = () => {
@@ -22,8 +19,7 @@ function Register() {
     if (!formData.email || !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(formData.email)) return 'Invalid email format.';
     if (!formData.password) return 'Password is needed.';
     if (formData.password !== formData.confirmPassword) return 'Passwords aren\'t matching.';
-    return '';
-  };
+    return '';};
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -33,34 +29,28 @@ function Register() {
       return;
     }
 
-    setLoading(true);
-    setError('');
+    setLoading(true);setError('');
 
     const data = {
-      firstname: formData.firstname,
-      lastname: formData.lastname,
+      firstname: formData.firstname,lastname: formData.lastname,
       email: formData.email,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword
-    };
+      password: formData.password,confirmPassword: formData.confirmPassword};
 
     try {
-      const response = await axios.post('http://localhost:3001/register', data);
+      const response = await axios.post('http://localhost:3001/register',data);
       console.log('Registration successful:', response.data);
-      setSuccessMessage('Registration successful! Redirecting to the login page...');
+      setSuccessMessage('Registration successful! Redirecting to the Login page...');
       setTimeout(() => {
         navigate('/login');
-      }, 2000); 
+      }, 4000); 
     } catch (error) {
       if (error.response?.status === 409) {
-        setError('Email already exists');
+        setError('Email already registered.Use anather one!');
       } else {
-        setError('Registration failed: ' + (error.response?.data?.error || 'Unknown error'));
-      }
-    } finally {
+        setError('Registration failed:' + (error.response?.data?.error || 'Unknown error(Things Happened)'));
+      }} finally {
       setLoading(false);
-    }
-  };
+    }};
 
   return (
     <div className="Registration">
@@ -69,61 +59,34 @@ function Register() {
         <p className="message">Signup now and get to use the list.</p>
         <div className="flex">
           <label>
-            <input
-              className="input"
-              type="text"
-              value={formData.firstname}
-              onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
-              required
-              aria-label="First Name"
-              aria-required="true"/>
+            <input className="input" type="text"
+              value={formData.firstname} onChange={(e) => setFormData({...formData, firstname: e.target.value })}
+              required aria-label="First Name" aria-required="true"/>
             <span><em>Firstname</em></span>
           </label>
           <label>
-            <input
-              className="input"
-              type="text"
-              value={formData.lastname}
-              onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
-              required
-              aria-label="Last Name"
-              aria-required="true"/>
+            <input className="input"  type="text" value={formData.lastname}
+              onChange={(e) => setFormData({...formData, lastname: e.target.value })}
+              required aria-label="Last Name" aria-required="true"/>
             <span><em>Lastname</em></span>
           </label>
         </div>
         <label>
-          <input
-            className="input"
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-            aria-label="Email"
-            aria-required="true"/>
+          <input className="input" type="email" value={formData.email}
+            onChange={(e) => setFormData({...formData, email: e.target.value })}
+            required aria-label="Email" aria-required="true"/>
           <span><em>Email</em></span>
         </label>
         <label>
-          <input
-            className="input"
-            type="password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            required
-            aria-label="Password"
-            aria-required="true"
-          />
+          <input className="input" type="password" value={formData.password}
+            onChange={(e) => setFormData({...formData,password: e.target.value })}
+            required aria-label="Password" aria-required="true"/>
           <span><em>Password</em></span>
         </label>
         <label>
-          <input
-            className="input"
-            type="password"
-            value={formData.confirmPassword}
-            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-            required
-            aria-label="Confirm Password"
-            aria-required="true"
-          />
+          <input className="input" type="password" value={formData.confirmPassword}
+            onChange={(e) => setFormData({...formData,confirmPassword: e.target.value})}
+            required aria-label="Confirm Password" aria-required="true"/>
           <span><em>Confirm Password</em></span>
         </label>
         {error && <p className="error"><em>{error}</em></p>}

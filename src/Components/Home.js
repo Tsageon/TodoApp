@@ -22,14 +22,12 @@ const Home = () => {
         if (data.authenticated) {
           setUserId(data.userId);
           fetchTasks(data.userId);
-        } else {
-          navigate('/login');
-        }
+        } else {navigate('/login');}
+
       } catch (error) {
         console.error('Error checking authentication:',error);
         navigate('/login'); 
-      }
-    };
+      }};
 
     checkAuth();
   }, [navigate]);
@@ -57,8 +55,8 @@ const Home = () => {
         withCredentials: true
       });
       const data = response.data;
-      console.log('Task added:', data); 
-      setTasks([...tasks, {id: data.id, description: newTask,priority }]);
+      console.log('Task added:',data); 
+      setTasks([...tasks,{id: data.id, description: newTask,priority }]);
       setNewTask('');
       setPriority('Low');
     } catch (error) {
@@ -81,16 +79,16 @@ const Home = () => {
     try {
       await axios.put(`http://localhost:3001/tasks/${id}`, {
         description: newDescription,
-        priority: newPriority
-      }, {
+        priority: newPriority},
+         {
         withCredentials: true
       });
-      console.log('Task updated:', {id, newDescription,newPriority }); 
+      console.log('Task updated:', {id,newDescription,newPriority }); 
       setTasks(
         tasks.map((task) =>
-          task.id === id ? {...task, description: newDescription, priority: newPriority } : task)
-      );
-    } catch (error) {
+          task.id === id ? {...task,description: newDescription,priority: newPriority } : task));
+   
+        } catch (error) {
       console.error('Error updating task:',error);
     }};
 
@@ -104,27 +102,20 @@ const Home = () => {
   return (
     <div>
       <h2>To-Do List</h2>
-      <TaskInput
-        newTask={newTask}
-        setNewTask={setNewTask}
+      <TaskInput newTask={newTask} setNewTask={setNewTask}
         priority={priority}
-        setPriority={setPriority}
-        addTask={addTask}/>
+        setPriority={setPriority} addTask={addTask}/>
       <TaskSearch search={search} setSearch={setSearch} handleSearch={handleSearch}/>
       <TaskList tasks={tasks}
-        deleteTask={deleteTask}
-        updateTask={updateTask}/>
+        deleteTask={deleteTask} updateTask={updateTask}/>
     </div>
   );
 };
 
 const TaskInput = ({newTask,setNewTask,priority,setPriority,addTask}) => (
   <div className="task-input">
-    <input
-      type="text"
-      value={newTask}
-      onChange={(e) => setNewTask(e.target.value)}
-      placeholder="What are we doing?"/>
+    <input type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)}
+      placeholder="What are we doing today?"/>
     <select value={priority} onChange={(e) => setPriority(e.target.value)}>
       <option value="High">High</option>
       <option value="Medium">Medium</option>
@@ -134,7 +125,7 @@ const TaskInput = ({newTask,setNewTask,priority,setPriority,addTask}) => (
   </div>
 );
 
-const TaskSearch = ({ search, setSearch, handleSearch }) => (
+const TaskSearch = ({search, setSearch,handleSearch}) => (
   <div className="task-search">
     <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
       placeholder="Search for task"/>
@@ -142,7 +133,7 @@ const TaskSearch = ({ search, setSearch, handleSearch }) => (
   </div>
 );
 
-const TaskList = ({ tasks, deleteTask, updateTask }) => {
+const TaskList = ({tasks, deleteTask,updateTask}) => {
   const [editingTaskId, setEditingTaskId] = useState(null);
 
   const handleEditClick = (id) => {
@@ -163,8 +154,8 @@ const TaskList = ({ tasks, deleteTask, updateTask }) => {
                 <>
                   <EditTaskForm
                     task={task}
-                    onUpdate={(id, newDescription, newPriority) => {
-                      updateTask(id, newDescription, newPriority);
+                    onUpdate={(id, newDescription,newPriority) => {
+                      updateTask(id, newDescription,newPriority);
                       handleCancelEdit();}}/>
                   <button className='cancel' onClick={handleCancelEdit}>Cancel</button>
                 </>
