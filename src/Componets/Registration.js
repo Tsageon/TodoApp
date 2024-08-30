@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; 
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './sharedStyles.css';
 import './Registration.css';
 
 function Registration() {
@@ -12,117 +13,142 @@ function Registration() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setError('');
-  }, [formData]);
+  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState('');
 
   const validateInputs = () => {
     if (!formData.firstname) return 'First name is needed.';
     if (!formData.lastname) return 'Last name is needed.';
     if (!formData.email || !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(formData.email)) return 'Invalid email format.';
     if (!formData.password) return 'Password is needed.';
-    if (formData.password !== formData.confirmPassword) return 'Passwords aren\'t matching.';
+    if (formData.password !== formData.confirmPassword) return 'Passwords don\'t match.';
     return '';
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errorMsg = validateInputs();
-    if (errorMsg) {
-      setError(errorMsg);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const validationError = validateInputs();
+    if (validationError) {
+      setError(validationError);
       return;
     }
-
+  
     setLoading(true);
-
+    setError('');
+  
+    const data = {
+      firstname: formData.firstname,
+      lastname: formData.lastname,
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword
+    };
+  
     try {
-      const response = await fetch(`http://localhost:3000/register`, { 
+      const response = await fetch('http://localhost:3001/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data)
       });
-
-      const data = await response.json();
-
+  
       if (!response.ok) {
-        setError(data.errors ? data.errors.map(err => err.msg).join(', ') : data.error);
+        const errorData = await response.json();
+        setError('Registration failed: ' + (errorData.errors?.map(err => err.msg).join(', ') || 'Unknown error'));
       } else {
-        alert('Registration successful!');
-        setFormData({
-          email: '',
-          password: '',
-          confirmPassword: '',
-          firstname: '',
-          lastname: ''
-        });
-        setError('');
+        const result = await response.json();
+        console.log('Registration successful:', result);
+        setSuccessMessage('Registration successful! Please login.');
+        navigate('/login');
       }
-    } catch (err) {
-      console.error('Network error:', err);
-      setError('Network error, please try again later');
+    } catch (error) {
+      setError('Network error: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="Registration">
       <form onSubmit={handleSubmit} className="form">
         <h1 className="title">Register</h1>
         <p className="message">Signup now and get to use the list.</p>
+        {successMessage && <p className="success"><em>{successMessage}</em></p>}
         <div className="flex">
           <label>
-            <input className="input" type="text" value={formData.firstname}
-              onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
-              required aria-label="First Name" aria-required="true"/>
+            <input 
+              className="input" 
+              type="text" 
+              name="firstname"
+              value={formData.firstname}
+              onChange={handleChange}
+              required 
+              aria-label="First Name" 
+              aria-required="true"
+            />
             <span><em>Firstname</em></span>
           </label>
           <label>
-            <input
-              className="input"
+            <input 
+              className="input" 
               type="text"
-              value={formData.lastname}
-              onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
-              required
-              aria-label="Last Name"
-              aria-required="true"/>
+              name="lastname"
+              value={formData.lastname} 
+              onChange={handleChange}
+              required 
+              aria-label="Last Name" 
+              aria-required="true"
+            />
             <span><em>Lastname</em></span>
           </label>
         </div>
         <label>
-          <input
-            className="input"
+          <input 
+            className="input" 
             type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-            aria-label="Email"
-            aria-required="true"/>
+            name="email"
+            value={formData.email} 
+            onChange={handleChange}
+            required 
+            aria-label="Email" 
+            aria-required="true"
+          />
           <span><em>Email</em></span>
         </label>
         <label>
           <input
             className="input"
             type="password"
+            name="password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={handleChange}
             required
             aria-label="Password"
-            aria-required="true"/>
+            aria-required="true"
+          />
           <span><em>Password</em></span>
         </label>
         <label>
           <input
             className="input"
             type="password"
+            name="confirmPassword"
             value={formData.confirmPassword}
-            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+            onChange={handleChange}
             required
             aria-label="Confirm Password"
-            aria-required="true"/>
+            aria-required="true"
+          />
           <span><em>Confirm Password</em></span>
         </label>
         {error && <p className="error"><em>{error}</em></p>}
@@ -131,7 +157,7 @@ function Registration() {
           {loading ? <em>Submitting...</em> : <em>Submit</em>}
         </button>
         <p className="signin">
-          <em>Already have an account?</em> <Link to="/login"><em>Signin</em></Link>
+          <em>Already have an account?</em><Link to="/login"><em>Signin</em></Link>
         </p>
       </form>
     </div>

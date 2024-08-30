@@ -44,44 +44,32 @@ const Home = () => {
   return (
     <div>
       <h2>To-Do List</h2>
-      <TaskInput
-        newTask={newTask}
-        setNewTask={setNewTask}
-        priority={priority}
-        setPriority={setPriority}
-        addTask={addTask}
-      />
-      <TaskSearch search={search} setSearch={setSearch} />
-      <TaskList tasks={filteredTasks} deleteTask={deleteTask} updateTask={updateTask} />
+      <TaskInput newTask={newTask}
+        setNewTask={setNewTask} priority={priority}
+        setPriority={setPriority} addTask={addTask}/>
+      <TaskSearch search={search} setSearch={setSearch}/>
+      <TaskList tasks={filteredTasks} deleteTask={deleteTask} updateTask={updateTask}/>
     </div>
   );
 };
 
 const TaskInput = ({ newTask, setNewTask, priority, setPriority, addTask }) => (
   <div className="task-input">
-    <input
-      type="text"
-      value={newTask}
-      onChange={(e) => setNewTask(e.target.value)}
-      placeholder="What are we doing?"
-    />
+    <input type="text"  placeholder="Input Task"
+      value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
     <select value={priority} onChange={(e) => setPriority(e.target.value)}>
       <option value="High">High</option>
       <option value="Medium">Medium</option>
       <option value="Low">Low</option>
     </select>
-    <button onClick={addTask}>Add Task</button>
+    <button className='addTask' onClick={addTask}>Add Task</button>
   </div>
 );
 
 const TaskSearch = ({ search, setSearch }) => (
   <div className="task-search">
-    <input
-      type="text"
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      placeholder="Do you remember what you did?"
-    />
+    <input type="text" placeholder="Search for Task"
+      value={search} onChange={(e) => setSearch(e.target.value)}/>
   </div>
 );
 
@@ -106,13 +94,11 @@ const TaskList = ({ tasks, deleteTask, updateTask }) => {
               <button className='delete' onClick={() => deleteTask(task.id)}>Delete</button>
               {editingTaskId === task.id ? (
                 <>
-                  <EditTaskForm
-                    task={task}
+                  <EditTaskForm task={task}
                     onUpdate={(id, newDescription, newPriority) => {
                       updateTask(id, newDescription, newPriority);
                       handleCancelEdit();
-                    }}
-                  />
+                    }}/>
                   <button className='cancel' onClick={handleCancelEdit}>Cancel</button>
                 </>
               ) : (

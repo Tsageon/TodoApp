@@ -1,143 +1,167 @@
 .login {
-  max-width: 1000px;
+  max-width: 1500px;
+  height: 500px;
   margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}
+  border-radius: 25px;
+  background-color: #171717;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login h1 {
+  font-size: 50px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: #00bfff;
+  text-align: center;
+  position: relative;
+  padding-left: 10px
+}
+
+.login h1::before,
+.login h1::after {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: #00bfff;
+  margin-left: 0;
+}
+
+.login h1::before {
+  left: 0px;
+}
+
+.login h1::after {
+  left: 0px;
+  width: 18px;
+  height: 18px;
+  animation: pulse 2s linear infinite;
+}
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   padding: 2em;
   background-color: #171717;
   border-radius: 25px;
-  transition: 0.4s ease-in-out;}
+  transition: 0.4s ease-in-out;
+}
 
 .form:hover {
   transform: scale(1.05);
-  border: 1px solid black;}
+  border: 1px solid black;
+}
 
 #heading {
   text-align: center;
-  margin: 2em;
-  color: rgb(255, 255, 255);
-  font-size: 1.2em;}
+  margin: 2em 0;
+  color: #00bfff;
+  font-size: 1.5em;
+}
 
 .field {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  border-radius: 25px;
-  padding: 0.6em;
-  border: none;
-  outline: none;
-  color: white;
-  background-color: #171717;
-  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+  flex-direction: column;
+  gap: 5px;
 }
 
-.input-icon {
-  height: 1.3em;
-  width: 1.3em;
-  fill: white;
-}
-
-.input-field {
-  background: none;
-  border: none;
-  outline: none;
+.input {
+  background-color: #333;
+  color: #fff;
   width: 100%;
-  color: #d3d3d3;
-}
-
-.button {
-  position: relative;
-  display: inline-flex;
-  height: 3em;
-  padding: 1px;
+  padding: 15px 10px 5px 10px;
+  outline: none;
+  border: 1px solid rgba(105, 105, 105, 0.397);
   border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-  background: none;
-  transition: transform 0.2s ease-in-out;
 }
 
-.button:hover {
-  transform: scale(1.05);
-}
-
-.button .bg-animation {
+.input + span {
+  color: rgba(255, 255, 255, 0.5);
   position: absolute;
-  inset: -1000%;
-  background: conic-gradient(from 90deg at 50% 50%, #e7029a 0%, #f472b6 50%, #bd5fff 100%);
-  animation: spin 2s linear infinite;
+  left: 10px;
+  font-size: 0.9em;
+  cursor: text;
+  transition: 0.3s ease;
 }
 
-.button .text {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.input:placeholder-shown + span {
+  bottom: 10px;
+  font-size: 0.9em;
+}
+
+.input:focus + span,
+.input:valid + span {
+  
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+.submit {
   width: 100%;
-  height: 100%;
-  padding: 0 1em;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: white;
-  background-color: #171717;
-  border-radius: 8px;
-  backdrop-filter: blur(8px);
-  transition: background-color 0.3s ease-in-out;
-}
-
-.button:hover .text {
-  background-color: #202020;
-}
-
-/* .button1 {
-  background-color: blue;
-  color: white;
-  margin-right: 10px;
-  padding: 0.5em 1em;
-  border-radius: 600px;
+  padding: 10px;
   border: none;
-  overflow: hidden;
-  position: relative;
-} */
+  border-radius: 10px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #00bfff;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
 
-.button1 .bg-animation {
-  inset: 5;}
+.submit:hover {
+  background-color: #00bfff96;
+}
 
-.button1:hover {
-  background-color:whitesmoke;}
-
-.button2 {
-  background-color: black;
+.sign-up,.button2 {
   color: white;
   text-decoration: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5em 0;
+  padding: 0.3em 0;
+  gap: 5px;
   border-radius: 10px;
-  transition: background-color 1.3s;}
-
-.button2:hover {
-  background-color: darkgrey;}
+  transition: background-color 0.3s;
+}
 
 .error-message {
   color: red;
   margin-top: 10px;
-  text-align: center;}
+  text-align: center;
+}
+.message, 
+.signin {
+  
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+.sign-up {
+  text-align: center;
+}
+
+.sign-up a {
+  color: #00bfff;
+  text-decoration: none;
+}
+
+.sign-up a:hover {
+  text-decoration: underline;
+  color: royalblue;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(0.9);
+    opacity: 1;
   }
-  100% {
-    transform: rotate(360deg);
-  }}
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}

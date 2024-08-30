@@ -14,13 +14,20 @@ body {
 .home-container h2 {
   text-align: center;}
 
-.task-input, .task-search, .edit-task-form {
+.task-input, .edit-task-form {
   margin-bottom: 20px;
   display: flex;
   gap: 10px;}
 
-.task-input input, .task-search input, .edit-task-form input {
-  flex: 1;
+.task-search,.task-search input{
+  margin-left: 90px;
+  border: 10px bold grey ;
+  border-radius: 5px;
+  width:80%;}
+
+.task-input input, .edit-task-form input {
+  margin-left:105px ;
+  width: 70%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;}
@@ -30,16 +37,32 @@ body {
   border: 1px solid #ddd;
   border-radius: 4px;}
 
+  .addTask{border-radius: 10px;}
+  .delete{
+   margin-bottom: 20px;
+   margin-right: 10px;}
+  
+  .edit{
+    margin-bottom: 20px;
+    justify-self: space-between;
+    margin-right: 10px;} 
+  
+  .cancel{margin-bottom: 20px;
+    padding: 10px;
+    display: flex;
+   justify-content: space-between;
+    margin-right: 15px;}
+   
 button {
   padding: 10px;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
   background-color: #007bff;
   color: white;}
 
 button:hover {
-  background-color: #0056b3;}
+  background-color: black;}
 
 ul {
   list-style-type: none;
@@ -52,22 +75,16 @@ li {
   justify-content: space-between;
   align-items: center;}
 
-.delete{
- margin-bottom: 20px;
- margin-right: 10px;}
-
-.edit{
-  margin-bottom: 20px;
-  margin-right: 10px;} 
- 
 li span {
   flex: 1;}
 
 li button {
+  justify-content: space-between;
+  gap:10px;
   background-color: lightblue;}
 
 li button:hover {
-  background-color: black;}
+  background-color: grey;}
 
 [data-priority="High"] span {
   color: red;}

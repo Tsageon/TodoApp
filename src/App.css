@@ -12,18 +12,20 @@ nav {
   display: flex;
   justify-content: center;}
 
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  gap: 10px;
-}
-
-nav li {
-  display: flex;
-}
-
+  nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  nav ul li .active {
+    font-weight: bold;
+    color: #00bfff; 
+    border-bottom: 2px solid #00bfff; 
+  }
 nav li a {
   color:whitesmoke;
   text-decoration: none;
@@ -33,7 +35,7 @@ nav li a {
 }
 
 nav li a:hover {
-  background-color: #61dafb;
+  background-color: royalblue;
 }
 
 .Links {
