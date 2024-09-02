@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "todo-list",
+=======
+  "name": "todolist",
+>>>>>>> origin/main
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,6 +13,7 @@
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^11.1.2",
+<<<<<<< HEAD
     "body-parser": "^1.20.2",
     "bootstrap": "^5.3.3",
     "cors": "^2.8.5",
@@ -19,6 +24,15 @@
     "react-router-dom": "^6.25.1",
     "react-scripts": "^5.0.1",
     "sql.js": "^1.10.3",
+=======
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.25.1",
+    "react-scripts": "5.0.1",
+>>>>>>> origin/main
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -45,9 +59,17 @@
       "last 1 safari version"
     ]
   },
+<<<<<<< HEAD
   "devDependencies": {
     "html-webpack-plugin": "^5.6.0",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   }
+=======
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+>>>>>>> origin/main
 }

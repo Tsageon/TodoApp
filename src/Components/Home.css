@@ -1,0 +1,85 @@
+body {
+    background-color: whitesmoke;
+    font-family: Arial, sans-serif;
+    color: #333;}
+  
+  .home-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}
+  
+  .home-container h2 {
+    text-align: center;}
+  
+  .task-input, .task-search, .edit-task-form {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;}
+  
+  .task-input input, .task-search input, .edit-task-form input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;}
+  
+  .task-input select, .edit-task-form select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;}
+  
+  button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;}
+  
+    .cancel {
+    margin-bottom: 20px;
+    gap: 10px;
+    margin-left: 10px;
+  }
+
+  button:hover {
+    background-color: #0056b3;}
+  
+  ul {
+    list-style-type: none;
+    padding: 0;}
+  
+  li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;}
+  
+  .delete{
+   margin-bottom: 20px;
+   margin-right: 10px;}
+  
+  .edit{
+    margin-bottom: 20px;
+    margin-right: 10px;} 
+   
+  li span {
+    flex: 1;}
+  
+  li button {
+    background-color: lightblue;}
+  
+  li button:hover {
+    background-color: black;}
+  
+  [data-priority="High"] span {
+    color: red;}
+  
+  [data-priority="Medium"] span {
+    color: orange;}
+  
+  [data-priority="Low"] span {
+    color: green;}

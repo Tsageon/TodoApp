@@ -1,0 +1,146 @@
+.Registration {
+    max-width: 5000px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 20px;
+    background-color: #1a1a1a;
+    color: #fff;
+  }
+  
+  .Registration h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    color: #00bfff;
+    text-align: center;
+    position: relative;
+    padding-left: 10px
+  }
+  
+  .Registration h1::before,
+  .Registration h1::after {
+    content: "";
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background-color: #00bfff;
+    margin-left: 0;
+  }
+  
+  .Registration h1::before {
+    left: 0px;
+  }
+  
+  .Registration h1::after {
+    left: 0px;
+    width: 18px;
+    height: 18px;
+    animation: pulse 5s linear infinite;
+  }
+  
+  .message, 
+  .signin {
+    font-size: 14.5px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .signin {
+    text-align: center;
+  }
+  
+  .signin a {
+    color: #00bfff;
+    text-decoration: none;
+  }
+  
+  .signin a:hover {
+    text-decoration: underline;
+    color: royalblue;
+  }
+  
+  .flex {
+    display: flex;
+    gap: 6px;
+  }
+  
+  .form label {
+    position: relative;
+    display: block;
+    margin-bottom: 15px;
+  }
+  
+  .form label .input {
+    background-color: #333;
+    color: #fff;
+    width: 100%;
+    padding: 20px 5px 5px 10px;
+    outline: none;
+    border: 1px solid rgba(105, 105, 105, 0.397);
+    border-radius: 10px;
+  }
+  
+  .form label .input + span {
+    color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    left: 10px;
+    top: 0;
+    font-size: 0.9em;
+    cursor: text;
+    transition: 0.3s ease;
+  }
+  
+  .form label .input:placeholder-shown + span {
+    top: 12.5px;
+    font-size: 0.9em;
+  }
+  
+  .form label .input:focus + span,
+  .form label .input:valid + span {
+    color: #00bfff;
+    top: 0;
+    font-size: 0.7em;
+    font-weight: 600;
+  }
+  
+  .submit, .Registration button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #00bfff;
+    cursor: pointer;
+    transform: .3s ease;
+  }
+  
+  .submit:hover, .Registration button:hover {
+    background-color: #00bfff96;
+  }
+  
+  
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  
+  .Registration input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  
+  @keyframes pulse {
+    from {
+      transform: scale(0.9);
+      opacity: 1;
+    }
+    to {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }  

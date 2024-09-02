@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body{
   background-color: grey;
 }
@@ -42,3 +43,47 @@ nav li a:hover {
   display: flex;
   gap: 10px;
 }
+=======
+.App {
+  font-family: Arial, sans-serif;
+}
+
+nav {
+  background-color: #333;
+  padding: 0px;
+  justify-content: space-between;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+nav li {
+  padding: 10px;
+  margin: 0 1rem;
+  justify-content: space-between;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 0.5rem 2rem;
+  border-radius: 5px;
+  transition: background-color 1.3s, color 0.3s;
+}
+
+nav a:hover {
+  background-color: #555;
+  color: #f1f1f1;
+}
+
+nav a.active {
+  background-color: #007bff;
+  color: #fff;
+}
+>>>>>>> origin/main
