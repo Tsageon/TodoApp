@@ -1,21 +1,20 @@
 .Registration {
-  max-width: 5000px;
+  max-width: 500px;
+  height: auto; 
   margin: auto;
   padding: 20px;
-  border: 1px solid #333;
-  border-radius: 20px;
-  background-color: #1a1a1a;
-  color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: #171717;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .Registration h1 {
-  font-size: 28px;
+  font-size: 1.5em; 
   font-weight: 600;
   letter-spacing: -1px;
   color: #00bfff;
   text-align: center;
-  position: relative;
-  padding-left: 10px
 }
 
 .Registration h1::before,
@@ -37,7 +36,94 @@
   left: 0px;
   width: 18px;
   height: 18px;
-  animation: pulse 5s linear infinite;
+  animation: pulse 2s linear infinite;
+}
+
+.Form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 2em;
+  background-color: #171717;
+  border-radius: 25px;
+  transition: 0.4s ease-in-out;
+}
+
+.Form:hover {
+  transform: scale(1.05);
+  border: 1px solid black;
+}
+
+#heading {
+  text-align: center;
+  color: #00bfff;
+  font-size: 1.5em;
+}
+
+.message {
+  text-align: center;
+  margin: 2em 0;
+  color: #00bfff;
+  font-size: 1.5em;
+}
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input {
+  background-color: #333;
+  color: #fff;
+  width: 100%;
+  padding: 15px 10px 5px 10px;
+  outline: none;
+  border: 1px solid rgba(105, 105, 105, 0.397);
+  border-radius: 10px;
+}
+
+.input + span {
+  color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  left: 10px;
+  font-size: 0.9em;
+  cursor: text;
+  transition: 0.3s ease;
+}
+
+.input:placeholder-shown + span {
+  bottom: 10px;
+  font-size: 0.9em;
+}
+
+.input:focus + span,
+.input:valid + span {
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+.submit {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #00bfff;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.submit:hover {
+  background-color: #00bfff96;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .message, 
@@ -60,70 +146,32 @@
   color: royalblue;
 }
 
-
-.form label {
-  position: relative;
-  display: block;
-  margin-bottom: 10px;
+@keyframes pulse {
+  from {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 
-.form label .input {
-  background-color: #333;
-  color: #fff;
-  width: 100%;
-  padding: 10px 5px 5px 10px;
-  outline: none;
-  border: 1px solid rgba(105, 105, 105, 0.397);
-  border-radius: 10px;
-}
+@media (max-width: 600px) {
+  .Registration h1 {
+    font-size: 1.8em; 
+  }
 
-.form label .input + span {
-  color: rgba(255, 255, 255, 0.5);
-  position: absolute;
-  left: 10px;
-  font-size: 0.9em;
-  cursor: text;
-  transition: 0.3s ease;
-}
+  .Registration {
+    padding: 15px;
+  }
 
-.form label .input:placeholder-shown + span {
-  top: 12.5px;
-  font-size: 0.9em;
-}
+  .input {
+    padding: 10px; 
+  }
 
-.form label .input:focus + span,
-.form label .input:valid + span {
-  color: #00bfff;
-  top: 0;
-  font-size: 0.7em;
-  font-weight: 600;
-}
-
-.submit, .Registration button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  color: #fff;
-  background-color: #00bfff;
-  cursor: pointer;
-  transform: .3s ease;
-}
-
-.submit:hover, .Registration button:hover {
-  background-color: #00bfff96;
-}
-
-
-.error {
-  color: red;
-  margin-top: 10px;
-}
-
-
-.Registration input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  .submit {
+    padding: 8px;
+    font-size: 14px;
+  }
 }

@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 body{
-  background-color: grey;
+  background-color: rgb(236, 236, 236);
 }
 
 .App {
@@ -43,7 +42,6 @@ nav li a:hover {
   display: flex;
   gap: 10px;
 }
-=======
 .App {
   font-family: Arial, sans-serif;
 }
@@ -86,4 +84,20 @@ nav a.active {
   background-color: #007bff;
   color: #fff;
 }
->>>>>>> origin/main
+button {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  button {
+    padding: 10px; 
+  }
+
+  li {
+    flex-direction: column; 
+  }
+
+  li button {
+    width: 100%; 
+  }
+}

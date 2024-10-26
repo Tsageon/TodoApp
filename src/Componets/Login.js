@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './authContext'
-import './sharedStyles.css';
 import './Login.css';
 
 
@@ -20,6 +19,7 @@ function Login() {
     if (!formData.password) return 'Password is needed.';
     return '';
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -39,27 +39,28 @@ function Login() {
       });
 
       const data = await response.json();
-      login();
-      navigate('/');
 
       if (!response.ok) {
         setError(data.error || 'Login failed');
       } else {
+        localStorage.setItem('token', data.token); 
+        login(data.token);
+
         alert('Welcome!');
-        localStorage.setItem('token', data.token);
         setFormData({
           email: '',
           password: ''
         });
         setSuccessMessage('Login Successful.');
         setError('');
-        navigate('/profile');
+        navigate('/'); 
       }
     } catch (err) {
       console.error('Network error:', err);
       setError('Network error, Time to relax.');
     }
   };
+
 
   return (
     <div className="login">

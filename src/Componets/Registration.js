@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './sharedStyles.css';
+
 import './Registration.css';
 
 function Registration() {
@@ -80,87 +80,108 @@ function Registration() {
 
   return (
     <div className="Registration">
-      <form onSubmit={handleSubmit} className="form">
-        <h1 className="title">Register</h1>
-        <p className="message">Signup now and get to use the list.</p>
-        {successMessage && <p className="success"><em>{successMessage}</em></p>}
-        <div className="flex">
-          <label>
-            <input 
-              className="input" 
-              type="text" 
-              name="firstname"
-              value={formData.firstname}
-              onChange={handleChange}
-              required 
-              aria-label="First Name" 
-              aria-required="true"
-            />
-            <span><em>Firstname</em></span>
-          </label>
-          <label>
-            <input 
-              className="input" 
-              type="text"
-              name="lastname"
-              value={formData.lastname} 
-              onChange={handleChange}
-              required 
-              aria-label="Last Name" 
-              aria-required="true"
-            />
-            <span><em>Lastname</em></span>
-          </label>
-        </div>
+    <form onSubmit={handleSubmit} className="Form">
+      <h1 className="title">Register</h1>
+      <p className="message">Signup now and get to use the list.</p>
+      {successMessage && <p className="success"><em>{successMessage}</em></p>}
+      
+      <div className="field flex">
+        <label>
+          <input 
+            className="input" 
+            type="text" 
+            name="firstname"
+            placeholder='First Name'
+            value={formData.firstname}
+            onChange={handleChange}
+            required 
+            aria-label="First Name" 
+            aria-required="true"
+          />
+          
+        </label>
+  
+        <label>  
+          <input 
+            className="input" 
+            type="text"
+            name="lastname"
+            placeholder='Last Name'
+            value={formData.lastname} 
+            onChange={handleChange}
+            required 
+            aria-label="Last Name" 
+            aria-required="true"
+          />
+       
+        </label>
+      </div>
+  
+      <div className="field">
         <label>
           <input 
             className="input" 
             type="email"
             name="email"
+            placeholder='Email'
             value={formData.email} 
             onChange={handleChange}
             required 
             aria-label="Email" 
             aria-required="true"
           />
-          <span><em>Email</em></span>
+     
         </label>
+      </div>
+  
+      <div className="field">
         <label>
           <input
             className="input"
             type="password"
             name="password"
+            placeholder='Password'
             value={formData.password}
             onChange={handleChange}
             required
             aria-label="Password"
             aria-required="true"
           />
-          <span><em>Password</em></span>
+        
         </label>
+      </div>
+  
+      <div className="field">
         <label>
           <input
             className="input"
             type="password"
             name="confirmPassword"
+            placeholder='Confirm Password'
             value={formData.confirmPassword}
             onChange={handleChange}
             required
             aria-label="Confirm Password"
             aria-required="true"
           />
-          <span><em>Confirm Password</em></span>
+       
         </label>
-        {error && <p className="error"><em>{error}</em></p>}
-        {loading && <p className="loading"><em>Submitting...</em></p>}
-        <button type="submit" className="submit" disabled={loading}>
-          {loading ? <em>Submitting...</em> : <em>Submit</em>}
-        </button>
-        <p className="signin">
-          <em>Already have an account?</em><Link to="/login"><em>Signin</em></Link>
-        </p>
-      </form>
-    </div>
+      </div>
+  
+      {error && <p className="error"><em>{error}</em></p>}
+      {loading && <p className="loading"><em>Submitting...</em></p>}
+      
+      <button type="submit" className="submit" disabled={loading}>
+        {loading ? <em>Submitting...</em> : <em>Submit</em>}
+      </button>
+      
+      <p className="signin">
+        <em>Already have an account?</em><Link to="/login"><em>Signin</em></Link>
+      </p>
+    </form>
+  </div>
+  
+   
   );
 }
 

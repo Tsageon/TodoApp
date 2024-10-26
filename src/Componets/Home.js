@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 import './Home.css';
 
 const Home = () => {
@@ -8,33 +10,97 @@ const Home = () => {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    setTasks(storedTasks);
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/tasks', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+        setTasks(data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
-  const addTask = () => {
+  const addTask = async () => {
     if (newTask.trim() === '') return;
-    const newTasks = [...tasks, { id: Date.now(), description: newTask, priority }];
-    setTasks(newTasks);
-    setNewTask('');
-    setPriority('Low');
+
+    const taskToAdd = { description: newTask, priority };
+
+    try {
+      const response = await fetch('http://localhost:3001/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}` 
+        },
+        body: JSON.stringify(taskToAdd)
+      });
+
+      const newTaskFromAPI = await response.json();
+      setTasks((prevTasks) => [...prevTasks, newTaskFromAPI]);
+      setNewTask('');
+      setPriority('Low');
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const deleteTask = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3001/tasks/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}` 
+        }
+      });
+
+      if (response.ok) {
+        setTasks(tasks.filter((task) => task.id !== id));
+      } else {
+        console.error('Error deleting task:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
-  const updateTask = (id, newDescription, newPriority) => {
+  const updateTask = async (id, newDescription, newPriority) => {
     if (!newDescription || !newPriority) return;
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, description: newDescription, priority: newPriority } : task
-      )
-    );
+
+    const updatedTask = { description: newDescription, priority: newPriority };
+
+    try {
+      const response = await fetch(`http://localhost:3001/tasks/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}` 
+        },
+        body: JSON.stringify(updatedTask)
+      });
+
+      if (response.ok) {
+        setTasks(
+          tasks.map((task) =>
+            task.id === id ? { ...task, description: newDescription, priority: newPriority } : task
+          )
+        );
+      } else {
+        console.error('Error updating task:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
   const filteredTasks = tasks.filter((task) =>
@@ -42,34 +108,62 @@ const Home = () => {
   );
 
   return (
-    <div>
-      <h2>To-Do List</h2>
-      <TaskInput newTask={newTask}
-        setNewTask={setNewTask} priority={priority}
-        setPriority={setPriority} addTask={addTask}/>
-      <TaskSearch search={search} setSearch={setSearch}/>
-      <TaskList tasks={filteredTasks} deleteTask={deleteTask} updateTask={updateTask}/>
+    <div className="home-container">
+      <h2 className="home-title">To-Do List</h2>
+      <div className="card">
+        <div className="input-search-container">
+          <TaskInput 
+            newTask={newTask}
+            setNewTask={setNewTask}
+            priority={priority}
+            setPriority={setPriority}
+            addTask={addTask} 
+          />
+        </div>
+      </div>
+      <TaskSearch 
+        search={search} 
+        setSearch={setSearch} 
+      />
+      <div className="task-list-container">
+        <TaskList 
+          tasks={filteredTasks} 
+          deleteTask={deleteTask} 
+          updateTask={updateTask} 
+        />
+      </div>
     </div>
   );
 };
 
 const TaskInput = ({ newTask, setNewTask, priority, setPriority, addTask }) => (
   <div className="task-input">
-    <input type="text"  placeholder="Input Task"
-      value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
-    <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-      <option value="High">High</option>
-      <option value="Medium">Medium</option>
-      <option value="Low">Low</option>
-    </select>
-    <button className='addTask' onClick={addTask}>Add Task</button>
+    <div className='input-field'>
+      <input 
+        type="text" 
+        placeholder="Input Task" 
+        className='left' 
+        value={newTask} 
+        onChange={(e) => setNewTask(e.target.value)} 
+      />
+      <select className="priority-select" value={priority} onChange={(e) => setPriority(e.target.value)}>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <button className='add-task' onClick={addTask}>Add Task</button>
   </div>
 );
 
 const TaskSearch = ({ search, setSearch }) => (
   <div className="task-search">
-    <input type="text" placeholder="Search for Task"
-      value={search} onChange={(e) => setSearch(e.target.value)}/>
+    <input 
+      type="text" 
+      placeholder="Search for Task" 
+      value={search} 
+      onChange={(e) => setSearch(e.target.value)} 
+    />
   </div>
 );
 
@@ -85,24 +179,30 @@ const TaskList = ({ tasks, deleteTask, updateTask }) => {
   };
 
   return (
-    <div>
+    <div className="task-list">
       {tasks.length > 0 ? (
         <ul>
           {tasks.map((task) => (
             <li key={task.id} style={{ color: getPriorityColor(task.priority) }}>
               <span>{task.description} - {task.priority}</span>
-              <button className='delete' onClick={() => deleteTask(task.id)}>Delete</button>
+              <button className='delete-button' onClick={() => deleteTask(task.id)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
               {editingTaskId === task.id ? (
                 <>
-                  <EditTaskForm task={task}
+                  <EditTaskForm 
+                    task={task}
                     onUpdate={(id, newDescription, newPriority) => {
                       updateTask(id, newDescription, newPriority);
                       handleCancelEdit();
-                    }}/>
-                  <button className='cancel' onClick={handleCancelEdit}>Cancel</button>
+                    }} 
+                  />
+                  <button className='cancel-button' onClick={handleCancelEdit}>Cancel</button>
                 </>
               ) : (
-                <button className='edit' onClick={() => handleEditClick(task.id)}>Edit</button>
+                <button className='edit-button' onClick={() => handleEditClick(task.id)}>
+                  <FontAwesomeIcon icon={faEdit} />
+                </button>
               )}
             </li>
           ))}
@@ -114,25 +214,28 @@ const TaskList = ({ tasks, deleteTask, updateTask }) => {
   );
 };
 
-const EditTaskForm = ({task,onUpdate }) => {
-  const [newDescription,setNewDescription] = useState(task.description);
-  const [newPriority,setNewPriority] = useState(task.priority);
+const EditTaskForm = ({ task, onUpdate }) => {
+  const [newDescription, setNewDescription] = useState(task.description);
+  const [newPriority, setNewPriority] = useState(task.priority);
 
   const handleUpdate = () => {
-    onUpdate(task.id,newDescription,newPriority);
+    onUpdate(task.id, newDescription, newPriority);
   };
 
   return (
     <div className="edit-task-form">
-      <input type="text" value={newDescription}
+      <input 
+        type="text" 
+        value={newDescription}
         onChange={(e) => setNewDescription(e.target.value)}
-        placeholder="What's new?"/>
+        placeholder="New Task description?" 
+      />
       <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}>
         <option value="High">High</option>
         <option value="Medium">Medium</option>
         <option value="Low">Low</option>
       </select>
-      <button onClick={handleUpdate}>Update</button>
+      <button className='update-button' onClick={handleUpdate}>Update</button>
     </div>
   );
 };

@@ -37,3 +37,10 @@
   .profile-body strong {
     color: #00bfff;
   }  
+
+  .logout-button{
+    width: 50%;
+    border-radius: 0.5rem;
+    color: black;
+    background-color: #00bfff ;
+  }
