@@ -13,6 +13,14 @@ const saltRounds = 12;
 app.use(bodyParser.json());
 app.use(cors());
 
+const recreateTablesWithNoForeignKeyChecks = () => {
+  db.prepare('PRAGMA foreign_keys = OFF').run(); 
+  db.prepare('DROP TABLE IF EXISTS tasks').run(); 
+  db.prepare('DROP TABLE IF EXISTS user').run(); 
+  createUserTable(); 
+  createTasksTable();
+  db.prepare('PRAGMA foreign_keys = ON').run(); 
+};
 
 const createUserTable = () => {
   const sql = `
@@ -27,15 +35,6 @@ const createUserTable = () => {
   db.prepare(sql).run();
 };
 
-
-const recreateUserTable = () => {
-  db.prepare('DROP TABLE IF EXISTS user').run();
-  createUserTable();
-};
-
-recreateUserTable();
-
-
 const createTasksTable = () => {
   const sql = `
     CREATE TABLE IF NOT EXISTS tasks (
@@ -49,13 +48,8 @@ const createTasksTable = () => {
   db.prepare(sql).run();
 };
 
-const recreateTasksTable = () => {
-  db.prepare('DROP TABLE IF EXISTS tasks').run();
-  createTasksTable();
-};
 
-
-recreateTasksTable();
+recreateTablesWithNoForeignKeyChecks();
 
 app.post('/register', [
   body('firstname').isString().trim().escape(),
@@ -67,7 +61,7 @@ app.post('/register', [
   console.log("Register request data:", req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log("Validation errors:", errors.array()); 
+    console.log("Validation errors:", errors.array());
     return res.status(400).json({ errors: errors.array() });
   }
 
@@ -91,7 +85,6 @@ app.post('/register', [
   }
 });
 
-
 app.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 }).escape()
@@ -113,12 +106,12 @@ app.post('/login', [
 
     const isMatch = bcrypt.compareSync(password, user.password);
     if (!isMatch) {
-      console.log("Login failed - invalid password"); 
+      console.log("Login failed - invalid password");
       return res.status(401).json({ error: 'Invalid password' });
     }
 
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '5h' });
-    console.log("User logged in:", user.email);  
+    console.log("User logged in:", user.email);
 
     res.status(200).json({
       message: 'Login successful',
@@ -136,7 +129,6 @@ app.post('/login', [
   }
 });
 
-
 const authenticateToken = (req, res, next) => {
   const token = req.headers['authorization'];
   if (!token) {
@@ -147,7 +139,7 @@ const authenticateToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(cleanedToken, 'your_jwt_secret');
-    req.user = decoded; 
+    req.user = decoded;
     next();
   } catch (error) {
     console.error('Error verifying token:', error);
@@ -169,9 +161,8 @@ app.get('/profile', authenticateToken, (req, res) => {
   }
 });
 
-
 app.get('/tasks', authenticateToken, (req, res) => {
-  const userId = req.user.id; 
+  const userId = req.user.id;
   try {
     const tasks = db.prepare('SELECT * FROM tasks WHERE userId = ?').all(userId);
     res.status(200).json(tasks);
@@ -186,14 +177,14 @@ app.post('/tasks', [
   body('description').isString().trim().escape(),
   body('priority').isString().trim().escape()
 ], (req, res) => {
-  console.log("Create task request:", req.body); 
+  console.log("Create task request:", req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { description, priority } = req.body;
-  const userId = req.user.id; 
+  const userId = req.user.id;
 
   try {
     const sql = `
@@ -202,15 +193,13 @@ app.post('/tasks', [
     `;
     const result = db.prepare(sql).run(userId, description, priority);
     const newTask = { id: result.lastInsertRowid, userId, description, priority };
-    console.log("Task created:", newTask); 
-    res.status(201).json(newTask); 
+    console.log("Task created:", newTask);
+    res.status(201).json(newTask);
   } catch (error) {
-   
     console.error('Error creating task:', error);
     res.status(500).json({ error: 'Error creating task' });
   }
 });
-
 
 app.put('/tasks/:id', [
   authenticateToken,
@@ -236,7 +225,6 @@ app.put('/tasks/:id', [
     if (result.changes === 0) {
       console.log(`Update failed: Task ${id} not found or insufficient permission for user ${userId}`);
       return res.status(404).json({ error: 'Task not found or you do not have permission to update this task' });
-      
     }
     res.status(200).json({ message: 'Task updated successfully' });
   } catch (error) {
@@ -247,16 +235,16 @@ app.put('/tasks/:id', [
 
 app.delete('/tasks/:id', authenticateToken, (req, res) => {
   const { id } = req.params;
-  const userId = req.user.id; 
+  const userId = req.user.id;
   try {
     const sql = `DELETE FROM tasks WHERE id = ? AND userId = ?`;
     const result = db.prepare(sql).run(id, userId);
     if (result.changes === 0) {
-      console.log(`Delete failed: Task ${id} not found or insufficient permission for user ${userId}`)
+      console.log(`Delete failed: Task ${id} not found or insufficient permission for user ${userId}`);
       return res.status(404).json({ error: 'Task not found or you do not have permission to delete this task' });
     }
     console.log(`Task ${id} deleted by user ${userId}`);
-    res.status(200).json({ message: 'Task deleted successfully' });
+    res.status(204).send(); 
   } catch (error) {
     console.error('Error deleting task:', error);
     res.status(500).json({ error: 'Error deleting task' });
@@ -264,5 +252,5 @@ app.delete('/tasks/:id', authenticateToken, (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
