@@ -30,6 +30,15 @@ const Navigation = () => {
   );
 };
 
+const NotFound = () => {
+  return (
+    <div className="not-found">
+      <h1><b><i>Where are you going?</i></b></h1>
+      <p>This page doesn't exist. Try navigating to a valid route!</p>
+    </div>
+  );
+};
+
 function App() {
   return (
     <AuthProvider>
@@ -39,7 +48,11 @@ function App() {
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>} 
+            />
             <Route 
               path="/profile" 
               element={
@@ -48,6 +61,7 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </Router>

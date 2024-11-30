@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
 import './Home.css';
 
 const Home = () => {
@@ -31,11 +32,30 @@ const Home = () => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
-  const addTask = async () => {
-    if (newTask.trim() === '') return;
+  
+    const addTask = async () => {
+      if (!newTask.trim()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Task Missing',
+          text: 'Please enter a task before adding!',
+          confirmButtonText: 'Got it!',
+        });
+        return;
+      }
+    
+      if (!priority) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Priority Missing',
+          text: 'Please select a priority level!',
+          confirmButtonText: 'Got it!',
+        });
+        return;
+      }
 
     const taskToAdd = { description: newTask, priority };
-
+    
     try {
       const response = await fetch('http://localhost:3001/tasks', {
         method: 'POST',
@@ -50,6 +70,12 @@ const Home = () => {
       setTasks((prevTasks) => [...prevTasks, newTaskFromAPI]);
       setNewTask('');
       setPriority('Low');
+      Swal.fire({
+        icon: 'success',
+        title: 'Task Added',
+        text: 'Task added Successfully!',
+        confirmButtonText: 'Alright!',
+      });
     } catch (error) {
       console.error('Error adding task:', error);
     }
@@ -66,11 +92,29 @@ const Home = () => {
 
       if (response.ok) {
         setTasks(tasks.filter((task) => task.id !== id));
+        Swal.fire({
+          icon: 'success',
+          title: 'Task Deleted Successfully',
+          text: 'The task was successfully deleted.',
+          confirmButtonText: 'Great!',
+        });
       } else {
         console.error('Error deleting task:', await response.json());
+        Swal.fire({
+          icon: 'error',
+          title: 'Error Deleting Task',
+          text: 'There was an issue deleting the task. Please try again.',
+          confirmButtonText: 'Got it!',
+        });
       }
     } catch (error) {
       console.error('Error deleting task:', error);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Something Went Wrong',
+        text: 'Please try again later!',
+        confirmButtonText: 'Got it!',
+      });
     }
   };
 
@@ -95,11 +139,29 @@ const Home = () => {
             task.id === id ? { ...task, description: newDescription, priority: newPriority } : task
           )
         );
+        Swal.fire({
+          icon: 'success',
+          title: 'Task Updated Successfully',
+          text: 'The task was successfully updated.',
+          confirmButtonText: 'Great!',
+        });
       } else {
         console.error('Error updating task:', await response.json());
+        Swal.fire({
+          icon: 'error',
+          title: 'Error Updating Task',
+          text: 'There was an issue updating the task. Please try again.',
+          confirmButtonText: 'Got it!',
+        });
       }
     } catch (error) {
       console.error('Error updating task:', error);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Something Went Wrong',
+        text: 'Please try again later!',
+        confirmButtonText: 'Got it!',
+      });
     }
   };
 

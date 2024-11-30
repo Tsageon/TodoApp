@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import Swal from 'sweetalert2';
+import Loader from './loader';
 import './Registration.css';
 
 function Registration() {
@@ -11,10 +12,10 @@ function Registration() {
     firstname: '',
     lastname: ''
   });
-  const [error, setError] = useState('');
+  const [error] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage] = useState('');
 
   const validateInputs = () => {
     if (!formData.firstname) return 'First name is needed.';
@@ -32,17 +33,19 @@ function Registration() {
       [name]: value,
     }));
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validationError = validateInputs();
     if (validationError) {
-      setError(validationError);
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: validationError,
+      });
       return;
     }
   
     setLoading(true);
-    setError('');
   
     const data = {
       firstname: formData.firstname,
@@ -63,21 +66,33 @@ function Registration() {
   
       if (!response.ok) {
         const errorData = await response.json();
-        setError('Registration failed: ' + (errorData.errors?.map(err => err.msg).join(', ') || 'Unknown error'));
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: errorData.errors?.map(err => err.msg).join(', ') || 'Unknown error',
+        });
       } else {
         const result = await response.json();
         console.log('Registration successful:', result);
-        setSuccessMessage('Registration successful! Please login.');
-        navigate('/login');
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful',
+          text: 'You have registered successfully! Redirecting to login...',
+        }).then(() => {
+          navigate('/login');
+        });
       }
     } catch (error) {
-      setError('Network error: ' + error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: error.message,
+      });
     } finally {
       setLoading(false);
     }
-  };
+  };  
   
-
   return (
     <div className="Registration">
     <form onSubmit={handleSubmit} className="Form">
@@ -98,7 +113,6 @@ function Registration() {
             aria-label="First Name" 
             aria-required="true"
           />
-          
         </label>
   
         <label>  
@@ -113,7 +127,6 @@ function Registration() {
             aria-label="Last Name" 
             aria-required="true"
           />
-       
         </label>
       </div>
   
@@ -130,7 +143,6 @@ function Registration() {
             aria-label="Email" 
             aria-required="true"
           />
-     
         </label>
       </div>
   
@@ -147,7 +159,6 @@ function Registration() {
             aria-label="Password"
             aria-required="true"
           />
-        
         </label>
       </div>
   
@@ -164,15 +175,14 @@ function Registration() {
             aria-label="Confirm Password"
             aria-required="true"
           />
-       
         </label>
       </div>
   
       {error && <p className="error"><em>{error}</em></p>}
-      {loading && <p className="loading"><em>Submitting...</em></p>}
+      {loading && <p className="loading"><Loader /></p>}
       
       <button type="submit" className="submit" disabled={loading}>
-        {loading ? <em>Submitting...</em> : <em>Submit</em>}
+        {loading ? <Loader /> : <em>Submit</em>}
       </button>
       
       <p className="signin">

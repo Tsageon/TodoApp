@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './authContext'
+import Swal from 'sweetalert2';
 import './Login.css';
 
 
 function Login() {
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const { login } = useAuth();
-  const [error, setError] = useState('');
+  const [error] = useState('');
   const navigate = useNavigate();
 
   const validateInputs = () => {
@@ -22,13 +23,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const errorMsg = validateInputs();
     if (errorMsg) {
-      setError(errorMsg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: errorMsg,
+      });
       return;
     }
-
+  
     try {
       const response = await fetch('http://localhost:3001/login', {
         method: 'POST',
@@ -37,30 +42,41 @@ function Login() {
         },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
-        setError(data.error || 'Login failed');
-      } else {
-        localStorage.setItem('token', data.token); 
-        login(data.token);
-
-        alert('Welcome!');
-        setFormData({
-          email: '',
-          password: ''
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: data.error || 'Invalid credentials. Please try again.',
         });
-        setSuccessMessage('Login Successful.');
-        setError('');
-        navigate('/'); 
+      } else {
+        localStorage.setItem('token', data.token);
+        login(data.token); // Assuming `login` is a function handling auth context.
+  
+        Swal.fire({
+          icon: 'success',
+          title: 'Welcome!',
+          text: 'Login successful. Redirecting to the homepage...',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          setFormData({ email: '', password: '' });
+          navigate('/');
+        });
       }
     } catch (err) {
       console.error('Network error:', err);
-      setError('Network error, Time to relax.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: 'Please check your internet connection and try again.',
+      });
     }
   };
-
+  
 
   return (
     <div className="login">
